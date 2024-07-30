@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import HelloWorld from "./components/HelloWorld.vue";
+import { ref } from "vue";
+
+const logContent = ref<string>("");
+async function showLogs() {
+  console.log(await window.ipcRenderer.invoke("read-log"));
+}
 </script>
 
 <template>
@@ -18,7 +23,7 @@ import HelloWorld from "./components/HelloWorld.vue";
       <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
     </a>
 
-    <button title="click me">click me to show log</button>
+    <button title="click me" @click="showLogs">click me to show log</button>
   </div>
 </template>
 
