@@ -31,12 +31,17 @@ async function showLogs() {
       <button title="click me" @click="buildAndRun">build and run</button>
     </div>
 
-    <p v-if="logs">Logs: {{ logs }}</p>
-    <p v-if="buildMessage">
+    <p v-if="logs" class="logs-section">Logs: <span v-html="logs"></span></p>
+    <p v-if="buildMessage" class="build-logs-section">
       Build Message:
-      {{ buildMessage }}
+      <span v-html="buildMessage"></span>
     </p>
   </div>
 </template>
 
-<style></style>
+<style lang="scss" scoped>
+.logs-section,
+.build-logs-section {
+  text-align: left;
+}
+</style>

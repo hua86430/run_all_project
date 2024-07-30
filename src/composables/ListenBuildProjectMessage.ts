@@ -5,7 +5,7 @@ export function listenBuildProjectMessage(
   projectName: string,
 ) {
   const listener = (event: any, message: string) => {
-    buildMessage.value = message + "\n";
+    buildMessage.value = message.replace(/\r?\n/g, "<br>") + "<br>";
   };
   window.ipcRenderer.on(`${projectName}-build-output`, listener);
 }
