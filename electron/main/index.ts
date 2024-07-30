@@ -1,9 +1,9 @@
-import { app, BrowserWindow, shell, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain, shell } from "electron";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import os from "node:os";
-import fs from "node:fs";
+import { getLogs } from "./getLogs";
 
 const require = createRequire(import.meta.url);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -81,17 +81,7 @@ async function createWindow() {
     return { action: "deny" };
   });
   // win.webContents.on('will-navigate', (event, url) => { }) #344
-
-  ipcMain.handle("read-log", async () => {
-    const logPath = "C:/logs/log-error.txt";
-    try {
-      const data = fs.readFileSync(logPath, "utf8");
-      return data;
-    } catch (error) {
-      console.error("讀取文件錯誤:", error);
-      return "";
-    }
-  });
+  getLogs();
 }
 
 app.whenReady().then(createWindow);
