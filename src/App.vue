@@ -2,11 +2,19 @@
 import { getMessage } from "./composables/GetMessage";
 import { LogRequest } from "./classes/logRequest";
 import { RunProjectRequest } from "./classes/RunProjectRequest";
+import { ref } from "vue";
+
+const output = ref("");
 
 async function buildAndRun() {
   const csprojFilePath =
     "D:/MyProject/Run_All_Project_Application/Run_All_Project_Application/Run_All_Project_Application/Run_All_Project_Application.csproj";
   const projectName = "Run_All_Project_Application";
+
+  const listener = (event: any, message: string) => {
+    output.value = message + "\n";
+  };
+  window.ipcRenderer.on(`${projectName}-build-output`, listener);
 
   const newVar = await window.ipcRenderer.invoke(
     "build-and-run",
@@ -26,6 +34,8 @@ async function showLogs() {
   <div>
     <button title="click me" @click="showLogs">click me to show log</button>
     <button title="click me" @click="buildAndRun">build and run</button>
+
+    {{ output }}
   </div>
 </template>
 

@@ -11,17 +11,23 @@ export function buildAndRunProject() {
       await new Promise((resolve, reject) => {
         exec(buildCommand, (error, stdout, stderr) => {
           if (error) {
-            console.error(`Build error: ${error.message}`);
-            event.sender.send("build-output", `Build error: ${error.message}`);
+            event.sender.send(
+              `${request.projectName}-build-output`,
+              `Build error: ${error.message}`,
+            );
             reject(error);
           }
           if (stderr) {
-            console.error(`Build stderr: ${stderr}`);
-            event.sender.send("build-output", `Build stderr: ${stderr}`);
+            event.sender.send(
+              `${request.projectName}-build-output`,
+              `Build stderr: ${stderr}`,
+            );
             reject(stderr);
           }
-          console.log(`Build stdout: ${stdout}`);
-          event.sender.send("build-output", `Build stdout: ${stdout}`);
+          event.sender.send(
+            `${request.projectName}-build-output`,
+            `Build stdout: ${stdout}`,
+          );
           resolve(stdout);
         });
       });
