@@ -6,6 +6,7 @@ import { ref } from "vue";
 import { listenBuildProjectMessage } from "./composables/ListenBuildProjectMessage";
 
 const buildMessage = ref("");
+const logs = ref<string>("");
 
 async function buildAndRun() {
   const csprojFilePath =
@@ -20,18 +21,24 @@ async function buildAndRun() {
 }
 
 async function showLogs() {
-  console.log(
-    await getMessage(new LogRequest("info", "C:/logs/log-error.txt")),
+  logs.value = await getMessage(
+    new LogRequest("info", "C:/logs/log-error.txt"),
   );
 }
 </script>
 
 <template>
   <div>
-    <button title="click me" @click="showLogs">click me to show log</button>
-    <button title="click me" @click="buildAndRun">build and run</button>
+    <div>
+      <button title="click me" @click="showLogs">click me to show log</button>
+      <button title="click me" @click="buildAndRun">build and run</button>
+    </div>
 
-    {{ buildMessage }}
+    <p v-if="logs">Logs: {{ logs }}</p>
+    <p v-if="buildMessage">
+      Build Message:
+      {{ buildMessage }}
+    </p>
   </div>
 </template>
 
