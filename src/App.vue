@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { getMessage } from "./composables/GetMessage";
 import { LogRequest } from "./classes/logRequest";
-import { RunProjectRequest } from "./classes/RunProjectRequest";
 import { ref } from "vue";
 import { listenBuildProjectMessage } from "./composables/ListenBuildProjectMessage";
+import { buildAndRunProject } from "./composables/BuildAndRunProject";
 
 const buildMessage = ref("");
 const logs = ref<string>("");
@@ -14,10 +14,7 @@ async function buildAndRun() {
   const projectName = "Run_All_Project_Application";
 
   listenBuildProjectMessage(buildMessage, projectName);
-  await window.ipcRenderer.invoke(
-    "build-and-run",
-    new RunProjectRequest(projectName, csprojFilePath),
-  );
+  await buildAndRunProject(projectName, csprojFilePath);
 }
 
 async function showLogs() {
