@@ -7,7 +7,10 @@ export function getLogs() {
     try {
       return fs.readFileSync(request.path, "utf8");
     } catch (error) {
-      console.error("讀取文件錯誤:", error);
+      console.error(
+        `Load file error: Level: ${request.level}, Path: ${request.path}`,
+        error,
+      );
       return "";
     }
   });
