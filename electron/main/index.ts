@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 import os from "node:os";
 import { getLogs } from "./getLogs";
+import { buildAndRunProject } from "./buildAndRunProject";
 
 const require = createRequire(import.meta.url);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -82,6 +83,7 @@ async function createWindow() {
   });
   // win.webContents.on('will-navigate', (event, url) => { }) #344
   getLogs();
+  buildAndRunProject();
 }
 
 app.whenReady().then(createWindow);
