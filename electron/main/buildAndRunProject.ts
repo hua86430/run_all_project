@@ -59,8 +59,8 @@ export function buildAndRunProject() {
     }
 
     try {
-      await buildProject();
       await killExistProcess(request.projectName, event);
+      await buildProject();
       await runProject();
       return { success: true, message: "Build and run successful" };
     } catch (error) {
