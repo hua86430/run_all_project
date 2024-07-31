@@ -3,6 +3,8 @@ import { exec, spawn } from "child_process";
 import { promisify } from "util";
 import { RunProjectRequest } from "../../src/classes/RunProjectRequest";
 import { killExistProcess } from "./killExistProcess";
+import chokidar from "chokidar";
+import path from "node:path";
 
 const execAsync = promisify(exec);
 
@@ -57,11 +59,30 @@ export function buildAndRunProject() {
         resolve(); // Resolve immediately to allow the function to return
       });
     }
+    async function watchForChanges() {
+      const watcher = chokidar.watch(path.dirname(request.csprojFilePath), {
+        persistent: true,
+        ignored: /node_modules|\.git/,
+        ignoreInitial: true,
+      });
+
+      watcher.on("change", async (filePath: string) => {
+        event.sender.send(
+          `${request.projectName}-build-output`,
+          `File ${filePath} has been changed. Rebuilding...`,
+        );
+        await killExistProcess(request.projectName, event);
+        await buildProject();
+        await runProject();
+      });
+    }
 
     try {
       await killExistProcess(request.projectName, event);
       await buildProject();
       await runProject();
+      await watchForChanges();
+
       return { success: true, message: "Build and run successful" };
     } catch (error) {
       return { success: false, message: error.message };
