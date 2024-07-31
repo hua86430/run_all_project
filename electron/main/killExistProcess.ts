@@ -1,9 +1,6 @@
 ﻿import psList from "ps-list";
 
-export async function killExistProcess(
-  projectName: string,
-  event: Electron.IpcMainInvokeEvent,
-) {
+export async function killExistProcess(projectName: string) {
   const processList = await psList();
   const existingProcess = processList.find((process) =>
     process.name.includes(projectName),
