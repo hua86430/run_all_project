@@ -2,17 +2,22 @@
 import { getMessage } from "./composables/GetMessage";
 import { LogRequest } from "./classes/logRequest";
 import { ref } from "vue";
-import { listenBuildProjectMessage } from "./composables/ListenBuildProjectMessage";
+import {
+  listenBuildProjectMessage,
+  listenRunProjectMessage,
+} from "./composables/ListenBuildProjectMessage";
 import { buildAndRunProject } from "./composables/BuildAndRunProject";
 import { UploadFile, UploadInstance } from "element-plus";
 import { CsprojFileObject } from "./classes/CsprojFileObject";
 
 const buildMessage = ref("");
+const runMessage = ref("");
 const logs = ref<string>("");
 const csprojFileObject = ref<CsprojFileObject>(new CsprojFileObject());
 
 async function buildAndRun() {
   listenBuildProjectMessage(buildMessage, csprojFileObject.value.projectName);
+  listenRunProjectMessage(runMessage, csprojFileObject.value.projectName);
   await buildAndRunProject(csprojFileObject.value);
 }
 
@@ -56,6 +61,10 @@ const onUploadFile = (uploadFile: UploadFile): void => {
     <p v-if="buildMessage" class="build-logs-section">
       Build Message:
       <span v-html="buildMessage"></span>
+    </p>
+    <p v-if="runMessage" class="run-logs-section">
+      Run Message:
+      <span v-html="runMessage"></span>
     </p>
   </div>
 </template>

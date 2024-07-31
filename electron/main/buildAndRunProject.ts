@@ -41,7 +41,7 @@ export function buildAndRunProject() {
       exec(runCommand, (error, stdout, stderr) => {
         if (error) {
           event.sender.send(
-            `${request.projectName}run-output`,
+            `${request.projectName}-run-output`,
             `Run error: ${error.message}`,
           );
           reject(error);
@@ -49,7 +49,7 @@ export function buildAndRunProject() {
         }
         if (stderr) {
           event.sender.send(
-            `${request.projectName}run-output`,
+            `${request.projectName}-run-output`,
             `Run stderr: ${stderr}`,
           );
 
@@ -57,7 +57,7 @@ export function buildAndRunProject() {
           return;
         }
         event.sender.send(
-          `${request.projectName}run-output`,
+          `${request.projectName}-run-output`,
           `Run stdout: ${stdout}`,
         );
         resolve(stdout);
