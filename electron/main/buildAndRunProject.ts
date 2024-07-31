@@ -5,15 +5,16 @@ import { RunProjectRequest } from "../../src/classes/RunProjectRequest";
 import { killExistProcess } from "./killExistProcess";
 import chokidar from "chokidar";
 import path from "node:path";
+import { RunProjectProcessingDto } from "../../src/classes/RunProjectProcessingDto";
 
 const execAsync = promisify(exec);
-
 let electronEvent: Electron.IpcMainInvokeEvent;
-let runProjectRequest: RunProjectRequest;
+let runProjectRequestDto: RunProjectProcessingDto;
+
 export function buildAndRunProject() {
   ipcMain.handle("build-and-run", async (event, request: RunProjectRequest) => {
     electronEvent = event;
-    runProjectRequest = request;
+    runProjectRequestDto = new RunProjectProcessingDto(request);
 
     try {
       await killExistProcess(request.projectName);
@@ -29,22 +30,22 @@ export function buildAndRunProject() {
 }
 
 async function buildProject() {
-  const buildCommand = `dotnet build "${runProjectRequest.csprojFilePath}"`;
+  const buildCommand = `dotnet build "${runProjectRequestDto.csprojFilePath}"`;
   try {
     const { stdout, stderr } = await execAsync(buildCommand);
     electronEvent.sender.send(
-      `${runProjectRequest.projectName}-build-output`,
+      runProjectRequestDto.buildEventChannel,
       `Build stdout: ${stdout}`,
     );
     if (stderr) {
       electronEvent.sender.send(
-        `${runProjectRequest.projectName}-build-output`,
-        `Build stderr: ${stderr}`,
+        runProjectRequestDto.buildEventChannel,
+        `,Build stderr: ${stderr}`,
       );
     }
   } catch (error) {
     electronEvent.sender.send(
-      `${runProjectRequest.projectName}-build-output`,
+      runProjectRequestDto.buildEventChannel,
       `Build error: ${error.message}`,
     );
     throw error;
@@ -56,21 +57,21 @@ function runProject() {
     const runProcess = spawn("dotnet", [
       "run",
       "--project",
-      runProjectRequest.csprojFilePath,
+      runProjectRequestDto.csprojFilePath,
     ]);
 
     runProcess.unref(); // Ensure the parent process does not wait for this process to exit
 
     runProcess.on("error", (error) => {
       electronEvent.sender.send(
-        `${runProjectRequest.projectName}-run-output`,
+        runProjectRequestDto.runEventChannel,
         `Run error: ${error.message}`,
       );
       reject(error);
     });
 
     electronEvent.sender.send(
-      `${runProjectRequest.projectName}-run-output`,
+      runProjectRequestDto.runEventChannel,
       `Run Success: Process ID: ${runProcess.pid}`,
     );
     resolve(); // Resolve immediately to allow the function to return
@@ -79,7 +80,7 @@ function runProject() {
 
 async function watchForChanges() {
   const watcher = chokidar.watch(
-    path.dirname(runProjectRequest.csprojFilePath),
+    path.dirname(runProjectRequestDto.csprojFilePath),
     {
       persistent: true,
       ignored: /node_modules|\.git/,
@@ -89,10 +90,10 @@ async function watchForChanges() {
 
   watcher.on("change", async (filePath: string) => {
     electronEvent.sender.send(
-      `${runProjectRequest.projectName}-build-output`,
+      runProjectRequestDto.watchEventChannel,
       `File ${filePath} has been changed. Rebuilding...`,
     );
-    await killExistProcess(runProjectRequest.projectName);
+    await killExistProcess(runProjectRequestDto.projectName);
     await buildProject();
     await runProject();
   });
