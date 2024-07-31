@@ -5,18 +5,15 @@ import { ref } from "vue";
 import { listenBuildProjectMessage } from "./composables/ListenBuildProjectMessage";
 import { buildAndRunProject } from "./composables/BuildAndRunProject";
 import { UploadFile, UploadInstance } from "element-plus";
+import { CsprojFileObject } from "./classes/CsprojFileObject";
 
 const buildMessage = ref("");
 const logs = ref<string>("");
-const csprojFileObject = ref<CsprojFileObject>();
+const csprojFileObject = ref<CsprojFileObject>(new CsprojFileObject());
 
 async function buildAndRun() {
-  const csprojFilePath =
-    "F:/git/namiuserinfoapi/NamiUserInfoApi/NamiUserInfoApi.csproj";
-  const projectName = "NamiUserInfoApi";
-
-  listenBuildProjectMessage(buildMessage, projectName);
-  await buildAndRunProject(projectName, csprojFilePath);
+  listenBuildProjectMessage(buildMessage, csprojFileObject.value.projectName);
+  await buildAndRunProject(csprojFileObject.value);
 }
 
 async function showLogs() {
@@ -27,29 +24,24 @@ async function showLogs() {
 
 const uploadRef = ref<UploadInstance>();
 
-class CsprojFileObject {
-  csprojFilePath: string | undefined;
-  projectPath: string | undefined;
-  constructor(csprojFilePath: string, projectName: string) {
-    this.csprojFilePath = csprojFilePath;
-    this.projectPath = csprojFilePath.replace(`\\${projectName}`, "");
-  }
-}
-
 const onUploadFile = (uploadFile: UploadFile): void => {
   csprojFileObject.value = new CsprojFileObject(
     uploadFile.raw!.path,
     uploadFile.name,
   );
-  console.log(csprojFileObject.value.csprojFilePath);
-  console.log(csprojFileObject.value.projectPath);
 };
 </script>
 
 <template>
   <div>
     <div>
-      <el-upload :on-change="onUploadFile" ref="uploadRef" :auto-upload="false">
+      <el-upload
+        :on-change="onUploadFile"
+        ref="uploadRef"
+        :auto-upload="false"
+        accept=".csproj"
+        :show-file-list="false"
+      >
         <template #trigger>
           <el-button type="primary">Select .csproj file</el-button>
         </template>
