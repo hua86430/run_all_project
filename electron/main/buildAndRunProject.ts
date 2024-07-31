@@ -1,15 +1,14 @@
 ﻿import { ipcMain } from "electron";
-import { exec } from "child_process";
+import { exec, spawn } from "child_process";
 import { promisify } from "util";
-import psList from "ps-list";
 import { RunProjectRequest } from "../../src/classes/RunProjectRequest";
+import { killExistProcess } from "./killExistProcess";
 
 const execAsync = promisify(exec);
 
 export function buildAndRunProject() {
   ipcMain.handle("build-and-run", async (event, request: RunProjectRequest) => {
     const buildCommand = `dotnet build "${request.csprojFilePath}"`;
-    const runCommand = `dotnet run --project "${request.csprojFilePath}"`;
 
     async function buildProject() {
       try {
@@ -33,54 +32,38 @@ export function buildAndRunProject() {
       }
     }
 
-    async function runProject() {
-      try {
-        console.log("Before execAsync runCommand");
-        const { stdout, stderr } = await execAsync(runCommand);
-        console.log("After execAsync runCommand");
-        event.sender.send(
-          `${request.projectName}-run-output`,
-          `Run stdout: ${stdout}`,
-        );
-        if (stderr) {
+    function runProject() {
+      return new Promise<void>((resolve, reject) => {
+        const runProcess = spawn("dotnet", [
+          "run",
+          "--project",
+          request.csprojFilePath,
+        ]);
+
+        runProcess.unref(); // Ensure the parent process does not wait for this process to exit
+
+        runProcess.on("error", (error) => {
           event.sender.send(
             `${request.projectName}-run-output`,
-            `Run stderr: ${stderr}`,
+            `Run error: ${error.message}`,
           );
-        }
-      } catch (error) {
+          reject(error);
+        });
+
         event.sender.send(
           `${request.projectName}-run-output`,
-          `Run error: ${error.message}`,
+          `Run Success: Process ID: ${runProcess.pid}`,
         );
-        throw error;
-      }
+        resolve(); // Resolve immediately to allow the function to return
+      });
     }
 
     try {
-      console.log("Starting buildProject");
       await buildProject();
-      console.log("Finished buildProject");
-
-      const processList = await psList();
-      const existingProcess = processList.find((process) =>
-        process.name.includes(request.projectName),
-      );
-
-      if (existingProcess) {
-        process.kill(existingProcess.pid);
-        event.sender.send(
-          `${request.projectName}-run-output`,
-          `Stopped existing process with PID: ${existingProcess.pid}`,
-        );
-      }
-
-      console.log("Starting runProject");
+      await killExistProcess(request.projectName, event);
       await runProject();
-      console.log("Finished runProject");
       return { success: true, message: "Build and run successful" };
     } catch (error) {
-      console.error("Error:", error);
       return { success: false, message: error.message };
     }
   });
