@@ -4,14 +4,16 @@ import { LogRequest } from "./classes/logRequest";
 import { ref } from "vue";
 import { listenBuildProjectMessage } from "./composables/ListenBuildProjectMessage";
 import { buildAndRunProject } from "./composables/BuildAndRunProject";
+import { UploadFile, UploadInstance } from "element-plus";
 
 const buildMessage = ref("");
 const logs = ref<string>("");
+const csprojFileObject = ref<CsprojFileObject>();
 
 async function buildAndRun() {
   const csprojFilePath =
-    "D:/MyProject/Run_All_Project_Application/Run_All_Project_Application/Run_All_Project_Application/Run_All_Project_Application.csproj";
-  const projectName = "Run_All_Project_Application";
+    "F:/git/namiuserinfoapi/NamiUserInfoApi/NamiUserInfoApi.csproj";
+  const projectName = "NamiUserInfoApi";
 
   listenBuildProjectMessage(buildMessage, projectName);
   await buildAndRunProject(projectName, csprojFilePath);
@@ -22,10 +24,37 @@ async function showLogs() {
     new LogRequest("info", "C:/logs/log-error.txt"),
   );
 }
+
+const uploadRef = ref<UploadInstance>();
+
+class CsprojFileObject {
+  csprojFilePath: string | undefined;
+  projectPath: string | undefined;
+  constructor(csprojFilePath: string, projectName: string) {
+    this.csprojFilePath = csprojFilePath;
+    this.projectPath = csprojFilePath.replace(`\\${projectName}`, "");
+  }
+}
+
+const onUploadFile = (uploadFile: UploadFile): void => {
+  csprojFileObject.value = new CsprojFileObject(
+    uploadFile.raw!.path,
+    uploadFile.name,
+  );
+  console.log(csprojFileObject.value.csprojFilePath);
+  console.log(csprojFileObject.value.projectPath);
+};
 </script>
 
 <template>
   <div>
+    <div>
+      <el-upload :on-change="onUploadFile" ref="uploadRef" :auto-upload="false">
+        <template #trigger>
+          <el-button type="primary">Select .csproj file</el-button>
+        </template>
+      </el-upload>
+    </div>
     <div>
       <button title="click me" @click="showLogs">click me to show log</button>
       <button title="click me" @click="buildAndRun">build and run</button>
