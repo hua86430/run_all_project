@@ -8,4 +8,8 @@
     this.fileName = csprojFilePath.replace(`\\${csprojFileName}`, "");
     this.projectName = csprojFileName.replace(".csproj", "");
   }
+
+  checkIfFileExists() {
+    return this.filePath;
+  }
 }

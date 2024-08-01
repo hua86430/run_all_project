@@ -16,6 +16,10 @@ const logs = ref<string>("");
 const csprojFileObject = ref<CsprojFileObject>(new CsprojFileObject());
 
 async function buildAndRun() {
+  if (!csprojFileObject.value.checkIfFileExists()) {
+    alert("Please upload a .csproj file");
+    return;
+  }
   listenBuildProjectMessage(buildMessage, csprojFileObject.value.projectName);
   listenRunProjectMessage(runMessage, csprojFileObject.value.projectName);
   await buildAndRunProject(csprojFileObject.value);
@@ -26,6 +30,8 @@ async function showLogs() {
     new LogRequest("info", "C:/logs/log-error.txt"),
   );
 }
+
+const killProcess = (): void => {};
 
 const uploadRef = ref<UploadInstance>();
 
@@ -53,8 +59,11 @@ const onUploadFile = (uploadFile: UploadFile): void => {
       </el-upload>
     </div>
     <div>
-      <button title="click me" @click="showLogs">click me to show log</button>
-      <button title="click me" @click="buildAndRun">build and run</button>
+      <el-button type="primary" @click="showLogs"
+        >click me to show log</el-button
+      >
+      <el-button type="info" @click="buildAndRun">build and run</el-button>
+      <el-button type="danger" @click="killProcess">kill process</el-button>
     </div>
 
     <p v-if="logs" class="logs-section">Logs: <span v-html="logs"></span></p>
