@@ -9,6 +9,7 @@ import { buildAndRunProject } from "./invokes/BuildAndRunProject";
 import { getMessage } from "./invokes/GetMessage";
 import { saveProjectConfig } from "./invokes/SaveProjectConfigInvokes";
 import UploadCsprojFile from "./UploadCsprojFile.vue";
+import KillProcessButton from "./KillProcessButton.vue";
 
 const buildMessage = ref("");
 const runMessage = ref("");
@@ -34,8 +35,6 @@ async function showLogs() {
     new LogRequest("info", "C:/logs/log-error.txt"),
   );
 }
-
-const killProcess = (project: ProjectConfig): void => {};
 </script>
 
 <template>
@@ -53,9 +52,7 @@ const killProcess = (project: ProjectConfig): void => {};
       <el-button type="info" @click="buildAndRun(project)"
         >build and run</el-button
       >
-      <el-button type="danger" @click="killProcess(project)"
-        >kill process</el-button
-      >
+      <KillProcessButton :project="project" />
     </div>
 
     <p v-if="logs" class="logs-section">Logs: <span v-html="logs"></span></p>
