@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { LogRequest } from "./classes/logRequest";
 import { onMounted, ref } from "vue";
-import { UploadFile, UploadInstance } from "element-plus";
 import { CsprojFileObject } from "./classes/CsprojFileObject";
 import { ProjectConfig } from "./classes/ProjectConfig";
 import { initProjectConfigs } from "./invokes/InitProjectConfigsInvokes";
@@ -10,11 +9,13 @@ import { listenRunProjectMessage } from "./listeners/ListenRunProjectMessage";
 import { buildAndRunProject } from "./invokes/BuildAndRunProject";
 import { getMessage } from "./invokes/GetMessage";
 import { saveProjectConfig } from "./invokes/SaveProjectConfigInvokes";
+import UploadCsprojFile from "./UploadCsprojFile.vue";
 
 const buildMessage = ref("");
 const runMessage = ref("");
 const logs = ref<string>("");
 const csprojFileObject = ref<CsprojFileObject>(new CsprojFileObject());
+const projectConfigs = ref<ProjectConfig[]>([]);
 
 onMounted(async () => {
   projectConfigs.value = await initProjectConfigs();
@@ -37,49 +38,12 @@ async function showLogs() {
 }
 
 const killProcess = (): void => {};
-
-const uploadRef = ref<UploadInstance>();
-const projectConfigs = ref<ProjectConfig[]>([]);
-
-const onUploadFile = (uploadFile: UploadFile): void => {
-  if (!Boolean(uploadFile.raw!.path)) {
-    alert("Please upload a .csproj file");
-  }
-
-  csprojFileObject.value = new CsprojFileObject(
-    uploadFile.raw!.path,
-    uploadFile.name,
-  );
-
-  const existConfig = projectConfigs.value.find(
-    (config) => config.projectName === csprojFileObject.value.projectName,
-  );
-
-  if (!existConfig) {
-    projectConfigs.value.push(
-      new ProjectConfig(
-        csprojFileObject.value.projectName,
-        csprojFileObject.value.filePath,
-      ),
-    );
-  }
-};
 </script>
 
 <template>
   <div>
     <div>
-      <el-upload
-        :on-change="onUploadFile"
-        ref="uploadRef"
-        :auto-upload="false"
-        accept=".csproj"
-        :show-file-list="false"
-      >
-        <template #trigger>
-          <el-button type="primary">Select .csproj file</el-button>
-        </template>
-      </el-upload>
+      <UploadCsprojFile v-model:project-configs="projectConfigs" />
     </div>
     <div>
       <el-button type="primary" @click="showLogs"
