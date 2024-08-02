@@ -6,27 +6,31 @@ import { killExistProcess } from "./killExistProcess";
 import chokidar from "chokidar";
 import path from "node:path";
 import { RunProjectProcessingDto } from "../../src/classes/RunProjectProcessingDto";
+import { InvokeResponse } from "../../src/classes/invokeResponse";
 
 const execAsync = promisify(exec);
 let electronEvent: Electron.IpcMainInvokeEvent;
 let runProjectRequestDto: RunProjectProcessingDto;
 
-export function buildAndRunProject() {
-  ipcMain.handle("build-and-run", async (event, request: RunProjectRequest) => {
-    electronEvent = event;
-    runProjectRequestDto = new RunProjectProcessingDto(request);
+export function buildAndRunProject(): void {
+  ipcMain.handle(
+    "build-and-run",
+    async (event, request: RunProjectRequest): Promise<InvokeResponse> => {
+      electronEvent = event;
+      runProjectRequestDto = new RunProjectProcessingDto(request);
 
-    try {
-      await killExistProcess(request.projectName);
-      await buildProject();
-      await runProject();
-      await watchForChanges();
+      try {
+        await killExistProcess(request.projectName);
+        await buildProject();
+        await runProject();
+        await watchForChanges();
 
-      return { success: true, message: "Build and run successful" };
-    } catch (error) {
-      return { success: false, message: error.message };
-    }
-  });
+        return InvokeResponse.success("Build and run successful");
+      } catch (error) {
+        return InvokeResponse.error(error.message);
+      }
+    },
+  );
 }
 
 async function buildProject() {
