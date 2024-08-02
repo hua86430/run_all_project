@@ -45,7 +45,8 @@ async function showLogs() {
         >Save</el-button
       >
     </div>
-    <div v-for="(project, index) in projectConfigs" :key="index">
+    <div v-for="(project, index) in projectConfigs" :key="project.projectName">
+      {{ project.projectName }}
       <!--      <el-button type="primary" @click="showLogs"-->
       <!--        >click me to show log</el-button-->
       <!--      >-->
