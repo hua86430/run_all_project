@@ -1,17 +1,4 @@
-﻿<template>
-  <el-upload
-    :on-change="onUploadFile"
-    ref="uploadRef"
-    :auto-upload="false"
-    accept=".csproj"
-    :show-file-list="false"
-  >
-    <template #trigger>
-      <el-button type="primary">Select .csproj file</el-button>
-    </template>
-  </el-upload>
-</template>
-<script lang="ts" setup>
+﻿<script lang="ts" setup>
 import { ref } from "vue";
 import { UploadFile, UploadInstance } from "element-plus";
 import { ProjectConfig } from "./classes/ProjectConfig";
@@ -49,3 +36,17 @@ const onUploadFile = (uploadFile: UploadFile): void => {
   }
 };
 </script>
+
+<template>
+  <el-upload
+    :on-change="onUploadFile"
+    ref="uploadRef"
+    :auto-upload="false"
+    accept=".csproj"
+    :show-file-list="false"
+  >
+    <template #trigger>
+      <el-button type="primary">Select .csproj file</el-button>
+    </template>
+  </el-upload>
+</template>
