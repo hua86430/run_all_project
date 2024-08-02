@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { LogRequest } from "./classes/logRequest";
 import { onMounted, ref } from "vue";
-import { CsprojFileObject } from "./classes/CsprojFileObject";
 import { ProjectConfig } from "./classes/ProjectConfig";
 import { initProjectConfigs } from "./invokes/InitProjectConfigsInvokes";
 import { listenBuildProjectMessage } from "./listeners/ListenBuildProjectMessage";
@@ -14,21 +13,20 @@ import UploadCsprojFile from "./UploadCsprojFile.vue";
 const buildMessage = ref("");
 const runMessage = ref("");
 const logs = ref<string>("");
-const csprojFileObject = ref<CsprojFileObject>(new CsprojFileObject());
 const projectConfigs = ref<ProjectConfig[]>([]);
 
 onMounted(async () => {
   projectConfigs.value = await initProjectConfigs();
 });
 
-async function buildAndRun() {
-  if (!csprojFileObject.value.checkIfFileExists()) {
+async function buildAndRun(project: ProjectConfig) {
+  if (!project.csprojPath.includes(".csproj")) {
     alert("Please upload a .csproj file");
     return;
   }
-  listenBuildProjectMessage(buildMessage, csprojFileObject.value.projectName);
-  listenRunProjectMessage(runMessage, csprojFileObject.value.projectName);
-  await buildAndRunProject(csprojFileObject.value);
+  listenBuildProjectMessage(buildMessage, project.projectName);
+  listenRunProjectMessage(runMessage, project.projectName);
+  await buildAndRunProject(project);
 }
 
 async function showLogs() {
@@ -37,22 +35,26 @@ async function showLogs() {
   );
 }
 
-const killProcess = (): void => {};
+const killProcess = (project: ProjectConfig): void => {};
 </script>
 
 <template>
   <div>
     <div>
       <UploadCsprojFile v-model:project-configs="projectConfigs" />
-    </div>
-    <div>
-      <el-button type="primary" @click="showLogs"
-        >click me to show log</el-button
-      >
-      <el-button type="info" @click="buildAndRun">build and run</el-button>
-      <el-button type="danger" @click="killProcess">kill process</el-button>
       <el-button type="warning" @click="saveProjectConfig(projectConfigs)"
         >Save</el-button
+      >
+    </div>
+    <div v-for="(project, index) in projectConfigs" :key="index">
+      <!--      <el-button type="primary" @click="showLogs"-->
+      <!--        >click me to show log</el-button-->
+      <!--      >-->
+      <el-button type="info" @click="buildAndRun(project)"
+        >build and run</el-button
+      >
+      <el-button type="danger" @click="killProcess(project)"
+        >kill process</el-button
       >
     </div>
 
