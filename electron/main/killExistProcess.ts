@@ -8,5 +8,7 @@ export async function killExistProcess(projectName: string) {
 
   if (existingProcess) {
     process.kill(existingProcess.pid);
+  } else {
+    console.log(`${projectName} not running`);
   }
 }
