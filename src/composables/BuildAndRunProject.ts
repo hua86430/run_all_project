@@ -1,9 +1,9 @@
 ﻿import { RunProjectRequest } from "../classes/RunProjectRequest";
 import { CsprojFileObject } from "../classes/CsprojFileObject";
-import { InvokeRequest } from "./InvokeRequest";
+import { SendInvoke } from "./SendInvoke";
 
 export async function buildAndRunProject(csprojFileObject: CsprojFileObject) {
-  const response = await InvokeRequest(
+  const response = await SendInvoke(
     "build-and-run",
     new RunProjectRequest(
       csprojFileObject.projectName,

@@ -1,9 +1,9 @@
 ﻿import { RunProjectRequest } from "../classes/RunProjectRequest";
 import { InvokeResponse } from "../classes/invokeResponse";
 
-export async function InvokeRequest(
+export async function SendInvoke(
   invokeName: string,
-  request: RunProjectRequest,
+  request: object,
 ): Promise<InvokeResponse> {
   const invokeResponse = (await window.ipcRenderer.invoke(
     invokeName,
