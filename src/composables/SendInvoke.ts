@@ -3,7 +3,7 @@ import { InvokeResponse } from "../classes/invokeResponse";
 
 export async function SendInvoke<T = any>(
   invokeName: string,
-  request?: object,
+  request?: any,
 ): Promise<InvokeResponse> {
   const invokeResponse = (await window.ipcRenderer.invoke(
     invokeName,

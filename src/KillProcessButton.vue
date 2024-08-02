@@ -3,11 +3,17 @@
 </template>
 <script lang="ts" setup>
 import { ProjectConfig } from "./classes/ProjectConfig";
+import { SendInvoke } from "./composables/SendInvoke";
 
 const props = defineProps<{
   project: ProjectConfig;
 }>();
-const killProcess = (): void => {
-  console.log(props.project);
+const killProcess = async (): Promise<void> => {
+  const killProcessResponse = await SendInvoke(
+    "kill-process",
+    props.project.projectName,
+  );
+
+  console.log(killProcessResponse);
 };
 </script>

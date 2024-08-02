@@ -8,6 +8,7 @@ import { buildAndRunProjectHandler } from "./handlers/buildAndRunProjectHandler"
 import { initProjectConfigFile } from "./useProjectConfig";
 import { SaveProjectConfigsHandler } from "./handlers/saveProjectConfigsHandler";
 import { getProjectConfigsHandler } from "./handlers/getProjectConfigsHandler";
+import { killProcessHandler } from "./handlers/killProcessHandler";
 
 const require = createRequire(import.meta.url);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -93,6 +94,7 @@ async function createWindow() {
   buildAndRunProjectHandler();
   SaveProjectConfigsHandler();
   getProjectConfigsHandler();
+  killProcessHandler();
 }
 
 app.whenReady().then(async () => {
