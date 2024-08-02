@@ -1,6 +1,6 @@
-﻿import { RunProjectRequest } from "../classes/RunProjectRequest";
-import { CsprojFileObject } from "../classes/CsprojFileObject";
-import { SendInvoke } from "./SendInvoke";
+﻿import { CsprojFileObject } from "../classes/CsprojFileObject";
+import { SendInvoke } from "../composables/SendInvoke";
+import { RunProjectRequest } from "../classes/RunProjectRequest";
 
 export async function buildAndRunProject(csprojFileObject: CsprojFileObject) {
   const response = await SendInvoke(

@@ -14,7 +14,10 @@
     "noEmit": true,
     "types": ["element-plus/global"]
   },
-  "include": ["src"],
+  "include": [
+    "src",
+    "node_modules/.pnpm/unplugin-auto-import@0.18.2/node_modules/unplugin-auto-import/auto-imports.d.ts"
+  ],
   "references": [
     { "path": "./tsconfig.node.json" }
   ]

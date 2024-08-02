@@ -1,7 +1,7 @@
-﻿export class InvokeResponse<T> {
+﻿export class InvokeResponse<T = any> {
   success: boolean;
   message: string;
-  data: any;
+  data: T;
 
   constructor(success: boolean, message: string, data?: T) {
     this.success = success;
@@ -11,6 +11,10 @@
 
   static success(message: string) {
     return new InvokeResponse(true, message);
+  }
+
+  static successWithData<T>(message: string, data: T) {
+    return new InvokeResponse(true, message, data);
   }
 
   static error(message: string) {

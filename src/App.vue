@@ -1,19 +1,24 @@
 <script setup lang="ts">
-import { getMessage } from "./composables/GetMessage";
 import { LogRequest } from "./classes/logRequest";
-import { ref } from "vue";
-import {
-  listenBuildProjectMessage,
-  listenRunProjectMessage,
-} from "./composables/ListenBuildProjectMessage";
-import { buildAndRunProject } from "./composables/BuildAndRunProject";
+import { onMounted, ref } from "vue";
 import { UploadFile, UploadInstance } from "element-plus";
 import { CsprojFileObject } from "./classes/CsprojFileObject";
+import { ProjectConfig } from "./classes/ProjectConfig";
+import { initProjectConfigs } from "./invokes/InitProjectConfigsInvokes";
+import { listenBuildProjectMessage } from "./listeners/ListenBuildProjectMessage";
+import { listenRunProjectMessage } from "./listeners/ListenRunProjectMessage";
+import { buildAndRunProject } from "./invokes/BuildAndRunProject";
+import { getMessage } from "./invokes/GetMessage";
+import { saveProjectConfig } from "./invokes/SaveProjectConfigInvokes";
 
 const buildMessage = ref("");
 const runMessage = ref("");
 const logs = ref<string>("");
 const csprojFileObject = ref<CsprojFileObject>(new CsprojFileObject());
+
+onMounted(async () => {
+  projectConfigs.value = await initProjectConfigs();
+});
 
 async function buildAndRun() {
   if (!csprojFileObject.value.checkIfFileExists()) {
@@ -34,12 +39,30 @@ async function showLogs() {
 const killProcess = (): void => {};
 
 const uploadRef = ref<UploadInstance>();
+const projectConfigs = ref<ProjectConfig[]>([]);
 
 const onUploadFile = (uploadFile: UploadFile): void => {
+  if (!Boolean(uploadFile.raw!.path)) {
+    alert("Please upload a .csproj file");
+  }
+
   csprojFileObject.value = new CsprojFileObject(
     uploadFile.raw!.path,
     uploadFile.name,
   );
+
+  const existConfig = projectConfigs.value.find(
+    (config) => config.projectName === csprojFileObject.value.projectName,
+  );
+
+  if (!existConfig) {
+    projectConfigs.value.push(
+      new ProjectConfig(
+        csprojFileObject.value.projectName,
+        csprojFileObject.value.filePath,
+      ),
+    );
+  }
 };
 </script>
 
@@ -64,6 +87,9 @@ const onUploadFile = (uploadFile: UploadFile): void => {
       >
       <el-button type="info" @click="buildAndRun">build and run</el-button>
       <el-button type="danger" @click="killProcess">kill process</el-button>
+      <el-button type="warning" @click="saveProjectConfig(projectConfigs)"
+        >Save</el-button
+      >
     </div>
 
     <p v-if="logs" class="logs-section">Logs: <span v-html="logs"></span></p>

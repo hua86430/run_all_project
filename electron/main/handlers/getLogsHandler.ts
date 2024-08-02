@@ -1,8 +1,8 @@
 ﻿import { ipcMain } from "electron";
 import fs from "node:fs";
-import { LogRequest } from "../../src/classes/logRequest";
+import { LogRequest } from "../../../src/classes/logRequest";
 
-export function getLogs() {
+export function getLogsHandler() {
   ipcMain.handle("read-log", async (event, request: LogRequest) => {
     try {
       return (

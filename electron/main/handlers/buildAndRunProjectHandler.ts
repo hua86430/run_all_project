@@ -1,18 +1,18 @@
 ﻿import { ipcMain } from "electron";
 import { exec, spawn } from "child_process";
 import { promisify } from "util";
-import { RunProjectRequest } from "../../src/classes/RunProjectRequest";
-import { killExistProcess } from "./killExistProcess";
+import { RunProjectRequest } from "../../../src/classes/RunProjectRequest";
+import { killExistProcess } from "../killExistProcess";
 import chokidar from "chokidar";
 import path from "node:path";
-import { RunProjectProcessingDto } from "../../src/classes/RunProjectProcessingDto";
-import { InvokeResponse } from "../../src/classes/invokeResponse";
+import { RunProjectProcessingDto } from "../../../src/classes/RunProjectProcessingDto";
+import { InvokeResponse } from "../../../src/classes/invokeResponse";
 
 const execAsync = promisify(exec);
 let electronEvent: Electron.IpcMainInvokeEvent;
 let runProjectRequestDto: RunProjectProcessingDto;
 
-export function buildAndRunProject(): void {
+export function buildAndRunProjectHandler(): void {
   ipcMain.handle(
     "build-and-run",
     async (event, request: RunProjectRequest): Promise<InvokeResponse> => {

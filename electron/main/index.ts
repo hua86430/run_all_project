@@ -3,9 +3,11 @@ import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import os from "node:os";
-import { getLogs } from "./getLogs";
-import { buildAndRunProject } from "./buildAndRunProject";
-import { checkConfigFileExist } from "./checkConfigFileExist";
+import { getLogsHandler } from "./handlers/getLogsHandler";
+import { buildAndRunProjectHandler } from "./handlers/buildAndRunProjectHandler";
+import { initProjectConfigFile } from "./useProjectConfig";
+import { SaveProjectConfigsHandler } from "./handlers/saveProjectConfigsHandler";
+import { getProjectConfigsHandler } from "./handlers/getProjectConfigsHandler";
 
 const require = createRequire(import.meta.url);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -79,7 +81,6 @@ async function createWindow() {
   // Test actively push message to the Electron-Renderer
   win.webContents.on("did-finish-load", () => {
     win?.webContents.send("main-process-message", new Date().toLocaleString());
-    checkConfigFileExist(win);
   });
 
   // Make all links open with the browser, not with the application
@@ -88,11 +89,16 @@ async function createWindow() {
     return { action: "deny" };
   });
   // win.webContents.on('will-navigate', (event, url) => { }) #344
-  getLogs();
-  buildAndRunProject();
+  getLogsHandler();
+  buildAndRunProjectHandler();
+  SaveProjectConfigsHandler();
+  getProjectConfigsHandler();
 }
 
-app.whenReady().then(createWindow);
+app.whenReady().then(async () => {
+  initProjectConfigFile();
+  await createWindow();
+});
 
 app.on("window-all-closed", () => {
   win = null;
