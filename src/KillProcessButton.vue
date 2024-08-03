@@ -5,13 +5,14 @@
 import { ProjectConfig } from "./classes/ProjectConfig";
 import { SendInvoke } from "./composables/SendInvoke";
 import { ElMessage } from "element-plus";
+import { InvokeEvent } from "./enums/InvokeEvent";
 
 const props = defineProps<{
   project: ProjectConfig;
 }>();
 const killProcess = async (): Promise<void> => {
   const killProcessResponse = await SendInvoke(
-    "kill-process",
+    InvokeEvent.KILL_PROCESS,
     props.project.projectName,
   );
 

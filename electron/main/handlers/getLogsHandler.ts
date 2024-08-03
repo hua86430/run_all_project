@@ -1,9 +1,10 @@
 ﻿import { ipcMain } from "electron";
 import fs from "node:fs";
 import { LogRequest } from "../../../src/classes/logRequest";
+import { InvokeEvent } from "../../../src/enums/InvokeEvent";
 
 export function getLogsHandler() {
-  ipcMain.handle("read-log", async (event, request: LogRequest) => {
+  ipcMain.handle(InvokeEvent.GET_LOGS, async (event, request: LogRequest) => {
     try {
       return (
         fs.readFileSync(request.path, "utf8").replace(/\r?\n/g, "<br>") + "<br>"

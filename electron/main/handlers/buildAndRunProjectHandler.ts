@@ -7,6 +7,7 @@ import chokidar from "chokidar";
 import path from "node:path";
 import { RunProjectProcessingDto } from "../../../src/classes/RunProjectProcessingDto";
 import { InvokeResponse } from "../../../src/classes/invokeResponse";
+import { InvokeEvent } from "../../../src/enums/InvokeEvent";
 
 const execAsync = promisify(exec);
 let electronEvent: Electron.IpcMainInvokeEvent;
@@ -14,7 +15,7 @@ let runProjectRequestDto: RunProjectProcessingDto;
 
 export function buildAndRunProjectHandler(): void {
   ipcMain.handle(
-    "build-and-run",
+    InvokeEvent.BUILD_AND_RUN_PROJECT,
     async (event, request: RunProjectRequest): Promise<InvokeResponse> => {
       electronEvent = event;
       runProjectRequestDto = new RunProjectProcessingDto(request);

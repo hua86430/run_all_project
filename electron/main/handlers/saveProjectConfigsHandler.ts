@@ -2,10 +2,11 @@
 import { ipcMain } from "electron";
 import { ProjectConfig } from "../../../src/classes/ProjectConfig";
 import { saveProjectConfigs } from "../useProjectConfig";
+import { InvokeEvent } from "../../../src/enums/InvokeEvent";
 
 export function SaveProjectConfigsHandler() {
   ipcMain.handle(
-    "save-project-config",
+    InvokeEvent.SAVE_PROJECT_CONFIG,
     async (event, request: ProjectConfig[]): Promise<InvokeResponse> => {
       try {
         saveProjectConfigs(request);
