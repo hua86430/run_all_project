@@ -58,10 +58,10 @@ async function createWindow() {
   win = new BrowserWindow({
     title: "Main window",
     icon: path.join(process.env.VITE_PUBLIC, "favicon.ico"),
-    width: 1280,
-    height: 720,
-    x: 200,
-    y: height * 0.5 - 360,
+    width: VITE_DEV_SERVER_URL ? 1440 : 1024,
+    height: VITE_DEV_SERVER_URL ? 768 : 768,
+    x: VITE_DEV_SERVER_URL ? 200 : undefined,
+    y: VITE_DEV_SERVER_URL ? height * 0.5 - 360 : undefined,
     webPreferences: {
       preload,
       // Warning: Enable nodeIntegration and disable contextIsolation is not secure in production

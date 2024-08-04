@@ -17,6 +17,7 @@ const logs = ref<string>("");
 const projectConfigs = ref<ProjectConfig[]>([]);
 const tableRef = ref<InstanceType<typeof ElTable>>();
 const isInitializing = ref<boolean>(true);
+const isBuilding = ref<boolean>(false);
 
 async function init() {
   setTimeout(async () => {
@@ -71,9 +72,15 @@ const isRunBtnEnable = computed((): boolean => {
 });
 
 const runAllProjects = async () => {
+  if (isBuilding.value) {
+    return;
+  }
+
+  isBuilding.value = true;
   await multipleBuildAndRunProject(
     projectConfigs.value.filter((config) => config.isSelected),
   );
+  isBuilding.value = false;
 };
 </script>
 
@@ -86,7 +93,7 @@ const runAllProjects = async () => {
       <div class="right-action">
         <el-button
           type="info"
-          :disabled="!isRunBtnEnable"
+          :disabled="isBuilding || !isRunBtnEnable"
           @click="runAllProjects"
           >Run Selected Projects</el-button
         >
@@ -125,7 +132,10 @@ const runAllProjects = async () => {
 
         <el-table-column prop="address" align="right" min-width="250">
           <template #default="{ row: project }">
-            <BuildAndRunProjectButton :project="project" />
+            <BuildAndRunProjectButton
+              :project="project"
+              v-model:is-building="isBuilding"
+            />
             <KillProcessButton :project="project" />
             <DeleteProjectConfigButton
               :project="project"
