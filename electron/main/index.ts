@@ -91,12 +91,12 @@ async function createWindow() {
     return { action: "deny" };
   });
   // win.webContents.on('will-navigate', (event, url) => { }) #344
+  processStatusHandler();
   getLogsHandler();
   buildAndRunProjectHandler();
   SaveProjectConfigsHandler();
   getProjectConfigsHandler();
   killProcessHandler();
-  processStatusHandler();
 }
 
 app.whenReady().then(async () => {

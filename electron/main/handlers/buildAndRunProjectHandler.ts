@@ -2,7 +2,7 @@
 import { exec, spawn } from "child_process";
 import { promisify } from "util";
 import { RunProjectRequest } from "../../../src/classes/RunProjectRequest";
-import { killExistProcess } from "../killExistProcess";
+import { killProcessByName } from "../useProcess";
 import chokidar from "chokidar";
 import path from "node:path";
 import { RunProjectProcessingDto } from "../../../src/classes/RunProjectProcessingDto";
@@ -25,7 +25,7 @@ export function buildAndRunProjectHandler(): void {
       runProjectRequestDto = new RunProjectProcessingDto(request);
 
       try {
-        await killExistProcess(request.projectName);
+        await killProcessByName(request.projectName);
         await buildProject();
         await runProject();
         await watchForChanges();
@@ -135,7 +135,7 @@ async function watchForChanges() {
       runProjectRequestDto.watchEventChannel,
       `File ${filePath} has been changed. Rebuilding...`,
     );
-    await killExistProcess(runProjectRequestDto.projectName);
+    await killProcessByName(runProjectRequestDto.projectName);
     await buildProject();
     await runProject();
   });

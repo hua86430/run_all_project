@@ -1,21 +1,32 @@
 ﻿import { ipcMain } from "electron";
 import { InvokeEvent } from "../../../src/enums/InvokeEvent";
 import { InvokeResponse } from "../../../src/classes/invokeResponse";
-import { SubscribeProcessStatusRequest } from "../../../src/interfaces/SubscribeProcessStatusRequest";
 import { ListenerResponse } from "../../../src/classes/ListenerResponse";
 import { SyncProcessStatusResponse } from "../../../src/interfaces/syncProcessStatusResponse";
 import { SyncProcessStatusRequest } from "../../../src/classes/syncProcessStatusRequest";
 import { SyncProcessStatus } from "../../../src/enums/syncProcessStatus";
+import { getExistProjectByName } from "../useProcess";
+import { ProcessStage } from "../../../src/enums/processStage";
+import { getProjectConfigs } from "../useProjectConfig";
 
 let electronEvent: Electron.IpcMainInvokeEvent;
 
 export function processStatusHandler(): void {
   ipcMain.handle(
     InvokeEvent.SUBSCRIBE_PROCESS_STATUS,
-    async (event, request: SubscribeProcessStatusRequest) => {
+    async (event, projectName: string) => {
       electronEvent = event;
 
-      // send the logs to the renderer process
+      const existingProcess = await getExistProjectByName(projectName);
+
+      syncProcessStatus(
+        new SyncProcessStatusRequest(
+          projectName,
+          existingProcess ? ProcessStage.RUNNING : ProcessStage.NOT_RUNNING,
+          SyncProcessStatus.SUCCESS,
+          existingProcess ? `Process ID: ${existingProcess.ppid}` : null,
+        ),
+      );
 
       return InvokeResponse.success("Subscribed to process status");
     },

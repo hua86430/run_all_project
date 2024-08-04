@@ -8,7 +8,7 @@ export function getProjectConfigsHandler() {
   ipcMain.handle(
     InvokeEvent.GET_PROJECT_CONFIGS,
     async (): Promise<InvokeResponse> => {
-      let projectConfigs = getProjectConfigs();
+      const projectConfigs = getProjectConfigs();
 
       return InvokeResponse.successWithData<ProjectConfig[]>(
         "Get Project Configs Success",

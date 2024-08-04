@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { LogRequest } from "./classes/logRequest";
-import { nextTick, onMounted, ref } from "vue";
+import { nextTick, onBeforeMount, onMounted, ref } from "vue";
 import { ProjectConfig } from "./classes/ProjectConfig";
 import { loadProjectConfigs } from "./invokes/InitProjectConfigsInvokes";
 import { getMessage } from "./invokes/GetMessage";
@@ -11,6 +11,8 @@ import BuildAndRunProjectButton from "./BuildAndRunProjectButton.vue";
 import { ElTable } from "element-plus";
 import DeleteProjectConfigButton from "./DeleteProjectConfigButton.vue";
 import ProjectStatusSection from "./ProjectStatusSection.vue";
+import { SendInvoke } from "./composables/SendInvoke";
+import { InvokeEvent } from "./enums/InvokeEvent";
 
 const logs = ref<string>("");
 const projectConfigs = ref<ProjectConfig[]>([]);
@@ -18,18 +20,20 @@ const tableRef = ref<InstanceType<typeof ElTable>>();
 const isInitializing = ref<boolean>(true);
 
 async function init() {
-  projectConfigs.value = await loadProjectConfigs();
+  setTimeout(async () => {
+    projectConfigs.value = await loadProjectConfigs();
 
-  await nextTick(() => {
-    projectConfigs.value.forEach((config) => {
-      tableRef.value!.toggleRowSelection(config, config.isSelected);
+    await nextTick(() => {
+      projectConfigs.value.forEach((config) => {
+        tableRef.value!.toggleRowSelection(config, config.isSelected);
+      });
+
+      isInitializing.value = false;
     });
-
-    isInitializing.value = false;
-  });
+  }, 1000);
 }
 
-onMounted(async () => {
+onBeforeMount(async () => {
   await init();
 });
 
