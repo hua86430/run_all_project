@@ -117,6 +117,7 @@ function runProject() {
   });
 }
 
+let debounceTimer: NodeJS.Timeout;
 async function watchForChanges() {
   const watcher = chokidar.watch(
     path.dirname(runProjectRequestDto.csprojFilePath),
@@ -127,21 +128,26 @@ async function watchForChanges() {
     },
   );
   watcher.on("change", async (filePath: string) => {
-    const existProcessByElectron = await getExistProjectByName(
-      runProjectRequestDto.projectName,
-      true,
-    );
+    clearTimeout(debounceTimer);
 
-    if (!existProcessByElectron) {
-      return;
-    }
+    debounceTimer = setTimeout(async () => {
+      console.log(1111);
+      const existProcessByElectron = await getExistProjectByName(
+        runProjectRequestDto.projectName,
+        true,
+      );
 
-    electronEvent.sender.send(
-      runProjectRequestDto.watchEventChannel,
-      `File ${filePath} has been changed. Rebuilding...`,
-    );
-    await killProcessByName(runProjectRequestDto.projectName);
-    await buildProject();
-    await runProject();
+      if (!existProcessByElectron) {
+        return;
+      }
+
+      electronEvent.sender.send(
+        runProjectRequestDto.watchEventChannel,
+        `File ${filePath} has been changed. Rebuilding...`,
+      );
+      await killProcessByName(runProjectRequestDto.projectName);
+      await buildProject();
+      await runProject();
+    }, 1000);
   });
 }
