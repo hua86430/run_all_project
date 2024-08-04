@@ -59,11 +59,12 @@ const handleSelectionChange = (selectedProjects: ProjectConfig[]): void => {
       >
     </div>
 
-    <div class="project-settings">
+    <div class="project-settings-container">
       <el-table
         ref="tableRef"
         :data="projectConfigs"
         style="width: 100%"
+        max-height="85vh"
         stripe
         @selectionChange="handleSelectionChange"
       >
@@ -86,14 +87,6 @@ const handleSelectionChange = (selectedProjects: ProjectConfig[]): void => {
           </template>
         </el-table-column>
       </el-table>
-      <div
-        v-for="(project, index) in projectConfigs"
-        :key="project.projectName"
-      >
-        <!--      <el-button type="primary" @click="showLogs"-->
-        <!--        >click me to show log</el-button-->
-        <!--      >-->
-      </div>
     </div>
 
     <p v-if="logs" class="logs-section">Logs: <span v-html="logs"></span></p>
@@ -107,7 +100,7 @@ const handleSelectionChange = (selectedProjects: ProjectConfig[]): void => {
   justify-content: space-between;
 }
 
-.project-settings {
+.project-settings-container {
   margin-top: 24px;
 }
 
