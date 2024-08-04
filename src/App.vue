@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { LogRequest } from "./classes/logRequest";
-import { nextTick, onBeforeMount, onMounted, ref } from "vue";
+import { nextTick, onBeforeMount, ref } from "vue";
 import { ProjectConfig } from "./classes/ProjectConfig";
 import { loadProjectConfigs } from "./invokes/InitProjectConfigsInvokes";
 import { getMessage } from "./invokes/GetMessage";
@@ -11,8 +11,6 @@ import BuildAndRunProjectButton from "./BuildAndRunProjectButton.vue";
 import { ElTable } from "element-plus";
 import DeleteProjectConfigButton from "./DeleteProjectConfigButton.vue";
 import ProjectStatusSection from "./ProjectStatusSection.vue";
-import { SendInvoke } from "./composables/SendInvoke";
-import { InvokeEvent } from "./enums/InvokeEvent";
 
 const logs = ref<string>("");
 const projectConfigs = ref<ProjectConfig[]>([]);

@@ -6,7 +6,7 @@ export class SyncProcessStatusRequest {
   projectName: string;
   stage: ProcessStage;
   status: SyncProcessStatus;
-  message: string;
+  message?: string;
 
   constructor(
     projectName: string,

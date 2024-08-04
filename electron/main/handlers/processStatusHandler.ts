@@ -1,5 +1,4 @@
-﻿import { ipcMain } from "electron";
-import { InvokeEvent } from "../../../src/enums/InvokeEvent";
+﻿import { InvokeEvent } from "../../../src/enums/InvokeEvent";
 import { InvokeResponse } from "../../../src/classes/invokeResponse";
 import { ListenerResponse } from "../../../src/classes/ListenerResponse";
 import { SyncProcessStatusResponse } from "../../../src/interfaces/syncProcessStatusResponse";
@@ -7,11 +6,12 @@ import { SyncProcessStatusRequest } from "../../../src/classes/syncProcessStatus
 import { SyncProcessStatus } from "../../../src/enums/syncProcessStatus";
 import { getExistProjectByName } from "../useProcess";
 import { ProcessStage } from "../../../src/enums/processStage";
+import { useHandler } from "./useHandler";
 
 let electronEvent: Electron.IpcMainInvokeEvent;
 
 export function processStatusHandler(): void {
-  ipcMain.handle(
+  useHandler(
     InvokeEvent.SUBSCRIBE_PROCESS_STATUS,
     async (event, projectName: string) => {
       electronEvent = event;

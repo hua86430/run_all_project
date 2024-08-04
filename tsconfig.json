@@ -15,7 +15,8 @@
     "types": ["element-plus/global"]
   },
   "include": [
-    "src",
+    "src/**/*.ts",
+    "src/**/*.d.ts",
     "node_modules/.pnpm/unplugin-auto-import@0.18.2/node_modules/unplugin-auto-import/auto-imports.d.ts",
     "node_modules/.pnpm/unplugin-auto-import@0.18.2/node_modules/unplugin-auto-import/auto-imports.d.ts"
   ],

@@ -1,7 +1,7 @@
 ﻿export class InvokeResponse<T = any> {
   success: boolean;
   message: string;
-  data: T;
+  data?: T;
 
   constructor(success: boolean, message: string, data?: T) {
     this.success = success;
@@ -23,7 +23,10 @@
 
   ensureSuccess() {
     if (!this.success) {
-      throw new Error(this.message);
+      const error = new Error(this.message);
+      alert(error.stack);
+
+      throw error;
     }
   }
 }

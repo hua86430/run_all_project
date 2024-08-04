@@ -1,11 +1,11 @@
-﻿import { ipcMain } from "electron";
-import { InvokeResponse } from "../../../src/classes/invokeResponse";
+﻿import { InvokeResponse } from "../../../src/classes/invokeResponse";
 import { getProjectConfigs } from "../useProjectConfig";
 import { ProjectConfig } from "../../../src/classes/ProjectConfig";
 import { InvokeEvent } from "../../../src/enums/InvokeEvent";
+import { useHandler } from "./useHandler";
 
 export function getProjectConfigsHandler() {
-  ipcMain.handle(
+  useHandler(
     InvokeEvent.GET_PROJECT_CONFIGS,
     async (): Promise<InvokeResponse> => {
       const projectConfigs = getProjectConfigs();

@@ -1,10 +1,10 @@
-﻿import { ipcMain } from "electron";
-import { InvokeResponse } from "../../../src/classes/invokeResponse";
+﻿import { InvokeResponse } from "../../../src/classes/invokeResponse";
 import { killProcessByName } from "../useProcess";
 import { InvokeEvent } from "../../../src/enums/InvokeEvent";
+import { useHandler } from "./useHandler";
 
 export function killProcessHandler() {
-  ipcMain.handle(
+  useHandler(
     InvokeEvent.KILL_PROCESS,
     async (event, processName: string): Promise<InvokeResponse> => {
       console.log("Kill process: ", processName);

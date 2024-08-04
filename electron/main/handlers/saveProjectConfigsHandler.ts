@@ -1,11 +1,11 @@
 ﻿import { InvokeResponse } from "../../../src/classes/invokeResponse";
-import { ipcMain } from "electron";
 import { ProjectConfig } from "../../../src/classes/ProjectConfig";
 import { saveProjectConfigs } from "../useProjectConfig";
 import { InvokeEvent } from "../../../src/enums/InvokeEvent";
+import { useHandler } from "./useHandler";
 
 export function SaveProjectConfigsHandler() {
-  ipcMain.handle(
+  useHandler(
     InvokeEvent.SAVE_PROJECT_CONFIG,
     async (event, request: ProjectConfig[]): Promise<InvokeResponse> => {
       try {

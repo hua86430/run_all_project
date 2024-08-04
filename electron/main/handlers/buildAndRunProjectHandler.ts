@@ -1,5 +1,4 @@
-﻿import { ipcMain } from "electron";
-import { exec, spawn } from "child_process";
+﻿import { exec, spawn } from "child_process";
 import { promisify } from "util";
 import { RunProjectRequest } from "../../../src/classes/RunProjectRequest";
 import { getExistProjectByName, killProcessByName } from "../useProcess";
@@ -12,28 +11,25 @@ import { syncProcessStatus } from "./processStatusHandler";
 import { SyncProcessStatusRequest } from "../../../src/classes/syncProcessStatusRequest";
 import { ProcessStage } from "../../../src/enums/processStage";
 import { SyncProcessStatus } from "../../../src/enums/syncProcessStatus";
+import { useHandler } from "./useHandler";
 
 const execAsync = promisify(exec);
 let electronEvent: Electron.IpcMainInvokeEvent;
 let runProjectRequestDto: RunProjectProcessingDto;
 
 export function buildAndRunProjectHandler(): void {
-  ipcMain.handle(
+  useHandler(
     InvokeEvent.BUILD_AND_RUN_PROJECT,
     async (event, request: RunProjectRequest): Promise<InvokeResponse> => {
       electronEvent = event;
       runProjectRequestDto = new RunProjectProcessingDto(request);
 
-      try {
-        await killProcessByName(request.projectName);
-        await buildProject();
-        await runProject();
-        await watchForChanges();
+      await killProcessByName(request.projectName);
+      await buildProject();
+      await runProject();
+      await watchForChanges();
 
-        return InvokeResponse.success("Build and run successful");
-      } catch (error) {
-        return InvokeResponse.error(error.message);
-      }
+      return InvokeResponse.success("Build and run successful");
     },
   );
 }

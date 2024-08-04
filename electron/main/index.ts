@@ -10,6 +10,7 @@ import { SaveProjectConfigsHandler } from "./handlers/saveProjectConfigsHandler"
 import { getProjectConfigsHandler } from "./handlers/getProjectConfigsHandler";
 import { killProcessHandler } from "./handlers/killProcessHandler";
 import { processStatusHandler } from "./handlers/processStatusHandler";
+import { InvokeResponse } from "../../src/classes/invokeResponse";
 
 const require = createRequire(import.meta.url);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -25,7 +26,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // │ └── index.html    > Electron-Renderer
 //
 process.env.APP_ROOT = path.join(__dirname, "../..");
-
 export const MAIN_DIST = path.join(process.env.APP_ROOT, "dist-electron");
 export const RENDERER_DIST = path.join(process.env.APP_ROOT, "dist");
 export const VITE_DEV_SERVER_URL = process.env.VITE_DEV_SERVER_URL;
