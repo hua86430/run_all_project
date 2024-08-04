@@ -11,7 +11,6 @@ export function ListenSubscribeProcessStatus(
     event: any,
     response: ListenerResponse<SyncProcessStatusResponse>,
   ) => {
-    console.log(response);
     processStatus.value = response.data;
   };
   window.ipcRenderer.on(

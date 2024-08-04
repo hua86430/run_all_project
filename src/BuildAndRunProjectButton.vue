@@ -24,12 +24,12 @@ async function buildAndRun() {
 <template>
   <el-button type="info" @click="buildAndRun" plain>build and run </el-button>
 
-  <p v-if="buildMessage" class="build-logs-section">
-    Build Message:
-    <span v-html="buildMessage"></span>
-  </p>
-  <p v-if="runMessage" class="run-logs-section">
-    Run Message:
-    <span v-html="runMessage"></span>
-  </p>
+  <!--  <p v-if="buildMessage" class="build-logs-section">-->
+  <!--    Build Message:-->
+  <!--    <span v-html="buildMessage"></span>-->
+  <!--  </p>-->
+  <!--  <p v-if="runMessage" class="run-logs-section">-->
+  <!--    Run Message:-->
+  <!--    <span v-html="runMessage"></span>-->
+  <!--  </p>-->
 </template>

@@ -29,6 +29,13 @@ export async function getExistProjectByName(
 }
 
 export async function killProcessByName(projectName: string) {
+  syncProcessStatus(
+    new SyncProcessStatusRequest(
+      projectName,
+      ProcessStage.KILLING_EXISTING_PROCESS,
+      SyncProcessStatus.SUCCESS,
+    ),
+  );
   const existingProcess = await getExistProjectByName(projectName);
 
   if (existingProcess) {

@@ -1,5 +1,7 @@
 ﻿export enum ProcessStage {
-  BUILDING = "BUILDING",
-  RUNNING = "RUNNING",
-  NOT_RUNNING = "NOT RUNNING",
+  BUILDING = "Building",
+  RUNNING = "Running",
+  NOT_RUNNING = "Not Running",
+  PROCESSING = "Processing",
+  KILLING_EXISTING_PROCESS = "Killing Existing Process",
 }

@@ -11,6 +11,4 @@ export async function buildAndRunProject(csprojFileObject: ProjectConfig) {
       csprojFileObject.csprojPath,
     ),
   );
-
-  console.log(response);
 }

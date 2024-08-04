@@ -131,7 +131,6 @@ async function watchForChanges() {
     clearTimeout(debounceTimer);
 
     debounceTimer = setTimeout(async () => {
-      console.log(1111);
       const existProcessByElectron = await getExistProjectByName(
         runProjectRequestDto.projectName,
         true,
