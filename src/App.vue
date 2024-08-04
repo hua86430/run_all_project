@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { LogRequest } from "./classes/logRequest";
-import { nextTick, onBeforeMount, ref } from "vue";
+import { computed, nextTick, onBeforeMount, ref } from "vue";
 import { ProjectConfig } from "./classes/ProjectConfig";
 import { loadProjectConfigs } from "./invokes/InitProjectConfigsInvokes";
 import { getMessage } from "./invokes/GetMessage";
@@ -11,6 +11,7 @@ import BuildAndRunProjectButton from "./BuildAndRunProjectButton.vue";
 import { ElTable } from "element-plus";
 import DeleteProjectConfigButton from "./DeleteProjectConfigButton.vue";
 import ProjectStatusSection from "./ProjectStatusSection.vue";
+import { buildAndRunProject } from "./invokes/BuildAndRunProject";
 
 const logs = ref<string>("");
 const projectConfigs = ref<ProjectConfig[]>([]);
@@ -41,7 +42,10 @@ async function showLogs() {
   );
 }
 
-const handleSelectionChange = (selectedProjects: ProjectConfig[]): void => {
+const isSaveBtnEnable = ref<boolean>(false);
+const handleSelectionChange = async (
+  selectedProjects: ProjectConfig[],
+): void => {
   if (isInitializing.value) {
     return;
   }
@@ -50,16 +54,51 @@ const handleSelectionChange = (selectedProjects: ProjectConfig[]): void => {
       (x) => x.projectName === config.projectName,
     );
   });
+
+  isSaveBtnEnable.value = !Object.is(
+    JSON.stringify(projectConfigs.value),
+    JSON.stringify(await loadProjectConfigs()),
+  );
+};
+
+const saveConfigs = async (): void => {
+  await saveProjectConfig(projectConfigs.value);
+  isSaveBtnEnable.value = false;
+};
+
+const isRunBtnEnable = computed((): boolean => {
+  return projectConfigs.value.some((config) => config.isSelected);
+});
+
+const runAllProjects = async () => {
+  const promises = projectConfigs.value
+    .filter((config) => config.isSelected)
+    .map((config) => buildAndRunProject(config));
+
+  await Promise.all(promises);
 };
 </script>
 
 <template>
   <div>
     <div class="base-action-section">
-      <UploadCsprojFile v-model:project-configs="projectConfigs" />
-      <el-button type="warning" @click="saveProjectConfig(projectConfigs)"
-        >Save</el-button
-      >
+      <div class="left-action">
+        <UploadCsprojFile v-model:project-configs="projectConfigs" />
+      </div>
+      <div class="right-action">
+        <el-button
+          type="info"
+          :disabled="!isRunBtnEnable"
+          @click="runAllProjects"
+          >Run Selected Projects</el-button
+        >
+        <el-button
+          type="warning"
+          @click="saveConfigs"
+          :disabled="!isSaveBtnEnable"
+          >Save Config</el-button
+        >
+      </div>
     </div>
 
     <div class="project-settings-container">
@@ -108,6 +147,11 @@ const handleSelectionChange = (selectedProjects: ProjectConfig[]): void => {
   display: flex;
   gap: 10px;
   justify-content: space-between;
+
+  .right-action {
+    display: flex;
+    gap: 10px;
+  }
 }
 
 .project-settings-container {
