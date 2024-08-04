@@ -12,52 +12,48 @@ import { SyncProcessStatusRequest } from "../../../src/classes/syncProcessStatus
 import { ProcessStage } from "../../../src/enums/processStage";
 import { SyncProcessStatus } from "../../../src/enums/syncProcessStatus";
 import { useHandler } from "./useHandler";
+import execAsync from "await-exec";
 
-const execAsync = promisify(exec);
 let electronEvent: Electron.IpcMainInvokeEvent;
-let runProjectRequestDto: RunProjectProcessingDto;
 
 export function buildAndRunProjectHandler(): void {
   useHandler(
     InvokeEvent.BUILD_AND_RUN_PROJECT,
     async (event, request: RunProjectRequest): Promise<InvokeResponse> => {
       electronEvent = event;
-      runProjectRequestDto = new RunProjectProcessingDto(request);
+      const dto = new RunProjectProcessingDto(request);
 
-      await killProcessByName(request.projectName);
-      await buildProject();
-      await runProject();
-      await watchForChanges();
+      await killProcessByName(dto.projectName);
+      await buildProject(dto);
+      await runProject(dto);
+      await watchForChanges(dto);
 
       return InvokeResponse.success("Build and run successful");
     },
   );
 }
 
-async function buildProject() {
-  const buildCommand = `dotnet build "${runProjectRequestDto.csprojFilePath}"`;
+async function buildProject(dto: RunProjectProcessingDto) {
+  const buildCommand = `dotnet build "${dto.csprojFilePath}"`;
   try {
     syncProcessStatus(
       new SyncProcessStatusRequest(
-        runProjectRequestDto.projectName,
+        dto.projectName,
         ProcessStage.BUILDING,
         SyncProcessStatus.SUCCESS,
       ),
     );
     const { stdout, stderr } = await execAsync(buildCommand);
-    electronEvent.sender.send(
-      runProjectRequestDto.buildEventChannel,
-      `Build stdout: ${stdout}`,
-    );
+    electronEvent.sender.send(dto.buildEventChannel, `Build stdout: ${stdout}`);
     if (stderr) {
       electronEvent.sender.send(
-        runProjectRequestDto.buildEventChannel,
+        dto.buildEventChannel,
         `,Build stderr: ${stderr}`,
       );
 
       syncProcessStatus(
         new SyncProcessStatusRequest(
-          runProjectRequestDto.projectName,
+          dto.projectName,
           ProcessStage.BUILDING,
           SyncProcessStatus.ERROR,
         ),
@@ -65,13 +61,13 @@ async function buildProject() {
     }
   } catch (error) {
     electronEvent.sender.send(
-      runProjectRequestDto.buildEventChannel,
+      dto.buildEventChannel,
       `Build error: ${error.message}`,
     );
 
     syncProcessStatus(
       new SyncProcessStatusRequest(
-        runProjectRequestDto.projectName,
+        dto.projectName,
         ProcessStage.BUILDING,
         SyncProcessStatus.ERROR,
       ),
@@ -80,12 +76,12 @@ async function buildProject() {
   }
 }
 
-function runProject() {
+function runProject(dto: RunProjectProcessingDto) {
   return new Promise<void>((resolve, reject) => {
     const runProcess = spawn("dotnet", [
       "run",
       "--project",
-      runProjectRequestDto.csprojFilePath,
+      dto.csprojFilePath,
       "--started-by=electron",
     ]);
 
@@ -93,20 +89,20 @@ function runProject() {
 
     runProcess.on("error", (error) => {
       electronEvent.sender.send(
-        runProjectRequestDto.runEventChannel,
+        dto.runEventChannel,
         `Run error: ${error.message}`,
       );
       reject(error);
     });
 
     electronEvent.sender.send(
-      runProjectRequestDto.runEventChannel,
+      dto.runEventChannel,
       `Run Success: Process ID: ${runProcess.pid}`,
     );
 
     syncProcessStatus(
       new SyncProcessStatusRequest(
-        runProjectRequestDto.projectName,
+        dto.projectName,
         ProcessStage.RUNNING,
         SyncProcessStatus.SUCCESS,
         `Process ID: ${runProcess.pid}`,
@@ -118,21 +114,18 @@ function runProject() {
 }
 
 let debounceTimer: NodeJS.Timeout;
-async function watchForChanges() {
-  const watcher = chokidar.watch(
-    path.dirname(runProjectRequestDto.csprojFilePath),
-    {
-      persistent: true,
-      ignored: /node_modules|\.git/,
-      ignoreInitial: true,
-    },
-  );
+async function watchForChanges(dto: RunProjectProcessingDto) {
+  const watcher = chokidar.watch(path.dirname(dto.csprojFilePath), {
+    persistent: true,
+    ignored: /node_modules|\.git/,
+    ignoreInitial: true,
+  });
   watcher.on("change", async (filePath: string) => {
     clearTimeout(debounceTimer);
 
     debounceTimer = setTimeout(async () => {
       const existProcessByElectron = await getExistProjectByName(
-        runProjectRequestDto.projectName,
+        dto.projectName,
         true,
       );
 
@@ -141,12 +134,12 @@ async function watchForChanges() {
       }
 
       electronEvent.sender.send(
-        runProjectRequestDto.watchEventChannel,
+        dto.watchEventChannel,
         `File ${filePath} has been changed. Rebuilding...`,
       );
-      await killProcessByName(runProjectRequestDto.projectName);
-      await buildProject();
-      await runProject();
+      await killProcessByName(dto.projectName);
+      await buildProject(dto);
+      await runProject(dto);
     }, 1000);
   });
 }

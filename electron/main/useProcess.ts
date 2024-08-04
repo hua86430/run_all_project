@@ -1,13 +1,8 @@
-﻿import psList from "ps-list";
-import { syncProcessStatus } from "./handlers/processStatusHandler";
+﻿import { syncProcessStatus } from "./handlers/processStatusHandler";
 import { SyncProcessStatusRequest } from "../../src/classes/syncProcessStatusRequest";
 import { ProcessStage } from "../../src/enums/processStage";
 import { SyncProcessStatus } from "../../src/enums/syncProcessStatus";
-import { exec } from "child_process";
-import { promisify } from "util";
 import findProcess from "find-process";
-
-const execAsync = promisify(exec);
 
 export async function getExistProjectByName(
   projectName: string,
