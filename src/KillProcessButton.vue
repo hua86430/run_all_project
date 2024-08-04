@@ -1,7 +1,6 @@
 ﻿<script lang="ts" setup>
 import { ProjectConfig } from "./classes/ProjectConfig";
 import { SendInvoke } from "./composables/SendInvoke";
-import { ElMessage } from "element-plus";
 import { InvokeEvent } from "./enums/InvokeEvent";
 
 const props = defineProps<{
@@ -12,7 +11,5 @@ const killProcess = async (): Promise<void> => {
 };
 </script>
 <template>
-  <el-button type="danger" @click="killProcess()" plain
-    >kill process
-  </el-button>
+  <el-button type="danger" @click="killProcess()" plain>Kill</el-button>
 </template>

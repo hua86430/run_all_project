@@ -35,7 +35,7 @@ async function buildAndRun() {
     @click="buildAndRun"
     plain
     :disabled="isBuildingModelValue"
-    >build and run
+    >Build And Run
   </el-button>
 
   <!--  <p v-if="buildMessage" class="build-logs-section">-->
