@@ -45,7 +45,7 @@ async function showLogs() {
 const isSaveBtnEnable = ref<boolean>(false);
 const handleSelectionChange = async (
   selectedProjects: ProjectConfig[],
-): void => {
+): Promise<void> => {
   if (isInitializing.value) {
     return;
   }
@@ -61,7 +61,7 @@ const handleSelectionChange = async (
   );
 };
 
-const saveConfigs = async (): void => {
+const saveConfigs = async (): Promise<void> => {
   await saveProjectConfig(projectConfigs.value);
   isSaveBtnEnable.value = false;
 };
@@ -71,7 +71,7 @@ const isRunBtnEnable = computed((): boolean => {
 });
 
 const runAllProjects = async () => {
-  multipleBuildAndRunProject(
+  await multipleBuildAndRunProject(
     projectConfigs.value.filter((config) => config.isSelected),
   );
 };

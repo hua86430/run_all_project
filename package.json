@@ -1,9 +1,8 @@
 {
-  "name": "run-.net-app-in-background",
-  "version": "28.1.0",
+  "name": "run-dot-net-app-in-background",
+  "version": "0.0.1-beta.0",
   "main": "dist-electron/main/index.js",
-  "description": "Really simple Electron + Vue + Vite boilerplate.",
-  "author": "草鞋没号 <308487730@qq.com>",
+  "author": "TWSC - Jack Huang",
   "license": "MIT",
   "private": true,
   "keywords": [
@@ -11,7 +10,15 @@
     "rollup",
     "vite",
     "vue3",
-    "vue"
+    "vue",
+    ".Net",
+    "C#",
+    "background",
+    "run",
+    "app",
+    "DotNetCore",
+    "DotNet"
+
   ],
   "debug": {
     "env": {
