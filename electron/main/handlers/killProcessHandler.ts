@@ -7,7 +7,6 @@ export function killProcessHandler() {
   useHandler(
     InvokeEvent.KILL_PROCESS,
     async (event, processName: string): Promise<InvokeResponse> => {
-      console.log("Kill process: ", processName);
       await killProcessByName(processName);
 
       return InvokeResponse.success("Kill process successful");
