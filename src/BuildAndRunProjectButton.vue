@@ -22,7 +22,7 @@ async function buildAndRun() {
 }
 </script>
 <template>
-  <el-button type="info" @click="buildAndRun">build and run </el-button>
+  <el-button type="info" @click="buildAndRun" plain>build and run </el-button>
 
   <p v-if="buildMessage" class="build-logs-section">
     Build Message:

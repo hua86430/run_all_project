@@ -1,7 +1,4 @@
-﻿<template>
-  <el-button type="danger" @click="killProcess()">kill process </el-button>
-</template>
-<script lang="ts" setup>
+﻿<script lang="ts" setup>
 import { ProjectConfig } from "./classes/ProjectConfig";
 import { SendInvoke } from "./composables/SendInvoke";
 import { ElMessage } from "element-plus";
@@ -21,3 +18,8 @@ const killProcess = async (): Promise<void> => {
   });
 };
 </script>
+<template>
+  <el-button type="danger" @click="killProcess()" plain
+    >kill process
+  </el-button>
+</template>
