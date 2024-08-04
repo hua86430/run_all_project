@@ -40,8 +40,6 @@ export async function killProcessByName(projectName: string) {
 
   if (existingProcess) {
     process.kill(existingProcess.pid);
-  } else {
-    console.log(`${projectName} not running`);
   }
 
   syncProcessStatus(
