@@ -8,14 +8,7 @@ const props = defineProps<{
   project: ProjectConfig;
 }>();
 const killProcess = async (): Promise<void> => {
-  const killProcessResponse = await SendInvoke(
-    InvokeEvent.KILL_PROCESS,
-    props.project.projectName,
-  );
-
-  ElMessage({
-    message: `Kill process success: ${killProcessResponse}`,
-  });
+  await SendInvoke(InvokeEvent.KILL_PROCESS, props.project.projectName);
 };
 </script>
 <template>

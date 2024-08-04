@@ -1,6 +1,6 @@
 ﻿<script lang="ts" setup>
 import { ProjectConfig } from "./classes/ProjectConfig.js";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed } from "vue";
 import { SendInvoke } from "./composables/SendInvoke";
 import { InvokeEvent } from "./enums/InvokeEvent";
 import { SyncProcessStatusResponse } from "./interfaces/syncProcessStatusResponse";
@@ -14,6 +14,29 @@ const props = defineProps<{
 }>();
 
 const processStatus = ref<SyncProcessStatusResponse>();
+
+const tagStatus = computed(
+  (): "success" | "warning" | "info" | "primary" | "danger" => {
+    if (!processStatus.value) {
+      return "danger";
+    }
+
+    if (processStatus.value.status === SyncProcessStatus.SUCCESS) {
+      switch (processStatus.value.stage) {
+        case ProcessStage.NOT_RUNNING:
+          return "info";
+        case ProcessStage.RUNNING:
+          return "success";
+        case ProcessStage.PROCESSING:
+          return "warning";
+        case ProcessStage.ERROR:
+          return "danger";
+      }
+    }
+
+    return "warning";
+  },
+);
 
 onMounted(async () => {
   ListenSubscribeProcessStatus(processStatus, props.project.projectName);
@@ -36,7 +59,7 @@ onMounted(async () => {
       size="large"
       class="status-tag"
       v-if="processStatus?.status === SyncProcessStatus.SUCCESS"
-      :type="processStatus?.stage === ProcessStage.RUNNING ? 'success' : 'info'"
+      :type="tagStatus"
     >
       {{ processStatus?.stage }}
       <el-icon v-if="Boolean(processStatus?.message)"><InfoFilled /></el-icon>
