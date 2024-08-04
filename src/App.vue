@@ -1,17 +1,15 @@
 <script setup lang="ts">
 import { LogRequest } from "./classes/logRequest";
-import { computed, nextTick, onBeforeMount, ref } from "vue";
+import { computed, nextTick, onBeforeMount, ref, watch } from "vue";
 import { ProjectConfig } from "./classes/ProjectConfig";
 import { loadProjectConfigs } from "./invokes/InitProjectConfigsInvokes";
 import { getMessage } from "./invokes/GetMessage";
 import { saveProjectConfig } from "./invokes/SaveProjectConfigInvokes";
 import UploadCsprojFile from "./UploadCsprojFile.vue";
-import KillProcessButton from "./KillProcessButton.vue";
-import BuildAndRunProjectButton from "./BuildAndRunProjectButton.vue";
 import { ElTable } from "element-plus";
-import DeleteProjectConfigButton from "./DeleteProjectConfigButton.vue";
 import ProjectStatusSection from "./ProjectStatusSection.vue";
 import { multipleBuildAndRunProject } from "./invokes/BuildAndRunProject";
+import ProjectConfigActionArea from "./ProjectConfigActionArea.vue";
 
 const logs = ref<string>("");
 const projectConfigs = ref<ProjectConfig[]>([]);
@@ -55,12 +53,24 @@ const handleSelectionChange = async (
       (x) => x.projectName === config.projectName,
     );
   });
-
-  isSaveBtnEnable.value = !Object.is(
-    JSON.stringify(projectConfigs.value),
-    JSON.stringify(await loadProjectConfigs()),
-  );
 };
+
+watch(
+  projectConfigs,
+  async (newValue, _) => {
+    if (isInitializing.value) {
+      return;
+    }
+
+    isSaveBtnEnable.value = !Object.is(
+      JSON.stringify(newValue.value),
+      JSON.stringify(await loadProjectConfigs()),
+    );
+  },
+  {
+    deep: true,
+  },
+);
 
 const saveConfigs = async (): Promise<void> => {
   await saveProjectConfig(projectConfigs.value);
@@ -132,14 +142,10 @@ const runAllProjects = async () => {
 
         <el-table-column prop="address" align="right" min-width="250">
           <template #default="{ row: project }">
-            <BuildAndRunProjectButton
-              :project="project"
-              v-model:is-building="isBuilding"
-            />
-            <KillProcessButton :project="project" />
-            <DeleteProjectConfigButton
-              :project="project"
+            <ProjectConfigActionArea
               v-model:project-configs="projectConfigs"
+              v-model:is-building="isBuilding"
+              :project="project"
             />
           </template>
         </el-table-column>
