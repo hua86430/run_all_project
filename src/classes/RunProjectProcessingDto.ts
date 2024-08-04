@@ -1,4 +1,5 @@
 ﻿import { RunProjectRequest } from "./RunProjectRequest";
+import { ListenerEvent } from "../enums/ListenerEvent";
 
 export class RunProjectProcessingDto {
   projectName: string;
@@ -10,14 +11,14 @@ export class RunProjectProcessingDto {
   }
 
   get buildEventChannel(): string {
-    return `${this.projectName}-build-output`;
+    return `${this.projectName}-${ListenerEvent.BUILD_OUTPUT}`;
   }
 
   get runEventChannel(): string {
-    return `${this.projectName}-run-output`;
+    return `${this.projectName}-${ListenerEvent.RUN_OUTPUT}`;
   }
 
   get watchEventChannel(): string {
-    return `${this.projectName}-watch-output`;
+    return `${this.projectName}-${ListenerEvent.WATCH_OUTPUT}`;
   }
 }

@@ -1,4 +1,5 @@
 ﻿import { Ref } from "vue";
+import { ListenerEvent } from "../enums/ListenerEvent";
 
 export function listenBuildProjectMessage(
   buildMessage: Ref<string>,
@@ -9,5 +10,8 @@ export function listenBuildProjectMessage(
   const listener = (event: any, message: string) => {
     buildMessage.value = message.replace(/\r?\n/g, "<br>") + "<br>";
   };
-  window.ipcRenderer.on(`${projectName}-build-output`, listener);
+  window.ipcRenderer.on(
+    `${projectName}-${ListenerEvent.BUILD_OUTPUT}`,
+    listener,
+  );
 }

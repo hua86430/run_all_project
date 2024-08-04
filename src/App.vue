@@ -10,6 +10,7 @@ import KillProcessButton from "./KillProcessButton.vue";
 import BuildAndRunProjectButton from "./BuildAndRunProjectButton.vue";
 import { ElTable } from "element-plus";
 import DeleteProjectConfigButton from "./DeleteProjectConfigButton.vue";
+import ProjectStatusSection from "./ProjectStatusSection.vue";
 
 const logs = ref<string>("");
 const projectConfigs = ref<ProjectConfig[]>([]);
@@ -76,7 +77,14 @@ const handleSelectionChange = (selectedProjects: ProjectConfig[]): void => {
           label="Project Name"
           width="220"
         />
-        <el-table-column prop="address" align="right" min-width="300">
+
+        <el-table-column label="Status" width="100">
+          <template #default="{ row: project }">
+            <ProjectStatusSection :project="project" />
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="address" align="right" min-width="250">
           <template #default="{ row: project }">
             <BuildAndRunProjectButton :project="project" />
             <KillProcessButton :project="project" />
