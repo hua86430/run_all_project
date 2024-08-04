@@ -1,4 +1,4 @@
-﻿import { spawn } from "child_process";
+﻿import { spawn, exec } from "child_process";
 import { RunProjectRequest } from "../../../src/classes/RunProjectRequest";
 import { getExistProjectByName, killProcessByName } from "../useProcess";
 import chokidar from "chokidar";
@@ -11,8 +11,9 @@ import { SyncProcessStatusRequest } from "../../../src/classes/syncProcessStatus
 import { ProcessStage } from "../../../src/enums/processStage";
 import { SyncProcessStatus } from "../../../src/enums/syncProcessStatus";
 import { useHandler } from "./useHandler";
-import execAsync from "await-exec";
+import { promisify } from "util";
 
+const execAsync = promisify(exec);
 let electronEvent: Electron.IpcMainInvokeEvent;
 
 async function doRunProject(request: RunProjectRequest) {
@@ -131,7 +132,7 @@ function runProject(dto: RunProjectProcessingDto) {
       ),
     );
 
-    resolve(); // Resolve immediately to allow the function to return
+    resolve();
   });
 }
 
