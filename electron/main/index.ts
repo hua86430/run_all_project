@@ -4,7 +4,10 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 import os from "node:os";
 import { getLogsHandler } from "./handlers/getLogsHandler";
-import { buildAndRunProjectHandler } from "./handlers/buildAndRunProjectHandler";
+import {
+  buildAndRunProjectHandler,
+  buildAndRunProjectHandlers,
+} from "./handlers/buildAndRunProjectHandler";
 import { initProjectConfigFile } from "./useProjectConfig";
 import { SaveProjectConfigsHandler } from "./handlers/saveProjectConfigsHandler";
 import { getProjectConfigsHandler } from "./handlers/getProjectConfigsHandler";
@@ -94,6 +97,7 @@ async function createWindow() {
   processStatusHandler();
   getLogsHandler();
   buildAndRunProjectHandler();
+  buildAndRunProjectHandlers();
   SaveProjectConfigsHandler();
   getProjectConfigsHandler();
   killProcessHandler();

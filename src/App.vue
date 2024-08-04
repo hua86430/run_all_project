@@ -11,7 +11,7 @@ import BuildAndRunProjectButton from "./BuildAndRunProjectButton.vue";
 import { ElTable } from "element-plus";
 import DeleteProjectConfigButton from "./DeleteProjectConfigButton.vue";
 import ProjectStatusSection from "./ProjectStatusSection.vue";
-import { buildAndRunProject } from "./invokes/BuildAndRunProject";
+import { multipleBuildAndRunProject } from "./invokes/BuildAndRunProject";
 
 const logs = ref<string>("");
 const projectConfigs = ref<ProjectConfig[]>([]);
@@ -71,11 +71,9 @@ const isRunBtnEnable = computed((): boolean => {
 });
 
 const runAllProjects = async () => {
-  const promises = projectConfigs.value
-    .filter((config) => config.isSelected)
-    .map((config) => buildAndRunProject(config));
-
-  await Promise.all(promises);
+  multipleBuildAndRunProject(
+    projectConfigs.value.filter((config) => config.isSelected),
+  );
 };
 </script>
 

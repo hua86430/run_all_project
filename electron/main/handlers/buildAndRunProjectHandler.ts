@@ -1,5 +1,4 @@
-﻿import { exec, spawn } from "child_process";
-import { promisify } from "util";
+﻿import { spawn } from "child_process";
 import { RunProjectRequest } from "../../../src/classes/RunProjectRequest";
 import { getExistProjectByName, killProcessByName } from "../useProcess";
 import chokidar from "chokidar";
@@ -16,17 +15,40 @@ import execAsync from "await-exec";
 
 let electronEvent: Electron.IpcMainInvokeEvent;
 
+async function doRunProject(request: RunProjectRequest) {
+  const dto = new RunProjectProcessingDto(request);
+
+  await killProcessByName(dto.projectName);
+  await buildProject(dto);
+  await runProject(dto);
+  await watchForChanges(dto);
+}
+
 export function buildAndRunProjectHandler(): void {
   useHandler(
     InvokeEvent.BUILD_AND_RUN_PROJECT,
     async (event, request: RunProjectRequest): Promise<InvokeResponse> => {
       electronEvent = event;
-      const dto = new RunProjectProcessingDto(request);
+      await doRunProject(request);
 
-      await killProcessByName(dto.projectName);
-      await buildProject(dto);
-      await runProject(dto);
-      await watchForChanges(dto);
+      return InvokeResponse.success("Build and run successful");
+    },
+  );
+}
+
+export function buildAndRunProjectHandlers(): void {
+  useHandler(
+    InvokeEvent.MULTIPLE_BUILD_AND_RUN_PROJECT,
+    async (event, requests: RunProjectRequest[]): Promise<InvokeResponse> => {
+      electronEvent = event;
+
+      const tasks = requests.map(
+        async (request: RunProjectRequest): Promise<void> => {
+          return doRunProject(request);
+        },
+      );
+
+      await Promise.all(tasks);
 
       return InvokeResponse.success("Build and run successful");
     },
