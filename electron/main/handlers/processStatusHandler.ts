@@ -7,7 +7,6 @@ import { SyncProcessStatusRequest } from "../../../src/classes/syncProcessStatus
 import { SyncProcessStatus } from "../../../src/enums/syncProcessStatus";
 import { getExistProjectByName } from "../useProcess";
 import { ProcessStage } from "../../../src/enums/processStage";
-import { getProjectConfigs } from "../useProjectConfig";
 
 let electronEvent: Electron.IpcMainInvokeEvent;
 
