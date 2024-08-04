@@ -75,12 +75,7 @@ const handleSelectionChange = (selectedProjects: ProjectConfig[]): void => {
           label="Project Name"
           width="220"
         />
-        <el-table-column
-          prop="address"
-          label="Action"
-          align="right"
-          min-width="300"
-        >
+        <el-table-column prop="address" align="right" min-width="300">
           <template #default="{ row: project }">
             <BuildAndRunProjectButton :project="project" />
             <KillProcessButton :project="project" />
