@@ -2,7 +2,7 @@
 import { exec, spawn } from "child_process";
 import { promisify } from "util";
 import { RunProjectRequest } from "../../../src/classes/RunProjectRequest";
-import { killProcessByName } from "../useProcess";
+import { getExistProjectByName, killProcessByName } from "../useProcess";
 import chokidar from "chokidar";
 import path from "node:path";
 import { RunProjectProcessingDto } from "../../../src/classes/RunProjectProcessingDto";
@@ -90,6 +90,7 @@ function runProject() {
       "run",
       "--project",
       runProjectRequestDto.csprojFilePath,
+      "--started-by=electron",
     ]);
 
     runProcess.unref(); // Ensure the parent process does not wait for this process to exit
@@ -129,8 +130,16 @@ async function watchForChanges() {
       ignoreInitial: true,
     },
   );
-
   watcher.on("change", async (filePath: string) => {
+    const existProcessByElectron = await getExistProjectByName(
+      runProjectRequestDto.projectName,
+      true,
+    );
+
+    if (!existProcessByElectron) {
+      return;
+    }
+
     electronEvent.sender.send(
       runProjectRequestDto.watchEventChannel,
       `File ${filePath} has been changed. Rebuilding...`,

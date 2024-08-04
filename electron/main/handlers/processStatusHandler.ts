@@ -17,8 +17,7 @@ export function processStatusHandler(): void {
     async (event, projectName: string) => {
       electronEvent = event;
 
-      const existingProcess = await getExistProjectByName(projectName);
-
+      const existingProcess = await getExistProjectByName(projectName, true);
       syncProcessStatus(
         new SyncProcessStatusRequest(
           projectName,

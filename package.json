@@ -41,6 +41,7 @@
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
     "chokidar": "^3.6.0",
+    "find-process": "^1.4.7",
     "lodash": "^4.17.21",
     "prettier": "^3.3.3",
     "ps-list": "^8.1.1",
