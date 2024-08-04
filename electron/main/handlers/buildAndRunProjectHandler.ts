@@ -8,6 +8,10 @@ import path from "node:path";
 import { RunProjectProcessingDto } from "../../../src/classes/RunProjectProcessingDto";
 import { InvokeResponse } from "../../../src/classes/invokeResponse";
 import { InvokeEvent } from "../../../src/enums/InvokeEvent";
+import { syncProcessStatus } from "./processStatusHandler";
+import { SyncProcessStatusRequest } from "../../../src/classes/syncProcessStatusRequest";
+import { ProcessStage } from "../../../src/enums/processStage";
+import { SyncProcessStatus } from "../../../src/enums/syncProcessStatus";
 
 const execAsync = promisify(exec);
 let electronEvent: Electron.IpcMainInvokeEvent;
@@ -37,6 +41,13 @@ export function buildAndRunProjectHandler(): void {
 async function buildProject() {
   const buildCommand = `dotnet build "${runProjectRequestDto.csprojFilePath}"`;
   try {
+    syncProcessStatus(
+      new SyncProcessStatusRequest(
+        runProjectRequestDto.projectName,
+        ProcessStage.BUILDING,
+        SyncProcessStatus.SUCCESS,
+      ),
+    );
     const { stdout, stderr } = await execAsync(buildCommand);
     electronEvent.sender.send(
       runProjectRequestDto.buildEventChannel,
@@ -47,11 +58,27 @@ async function buildProject() {
         runProjectRequestDto.buildEventChannel,
         `,Build stderr: ${stderr}`,
       );
+
+      syncProcessStatus(
+        new SyncProcessStatusRequest(
+          runProjectRequestDto.projectName,
+          ProcessStage.BUILDING,
+          SyncProcessStatus.ERROR,
+        ),
+      );
     }
   } catch (error) {
     electronEvent.sender.send(
       runProjectRequestDto.buildEventChannel,
       `Build error: ${error.message}`,
+    );
+
+    syncProcessStatus(
+      new SyncProcessStatusRequest(
+        runProjectRequestDto.projectName,
+        ProcessStage.BUILDING,
+        SyncProcessStatus.ERROR,
+      ),
     );
     throw error;
   }
@@ -79,6 +106,16 @@ function runProject() {
       runProjectRequestDto.runEventChannel,
       `Run Success: Process ID: ${runProcess.pid}`,
     );
+
+    syncProcessStatus(
+      new SyncProcessStatusRequest(
+        runProjectRequestDto.projectName,
+        ProcessStage.RUNNING,
+        SyncProcessStatus.SUCCESS,
+        `Process ID: ${runProcess.pid}`,
+      ),
+    );
+
     resolve(); // Resolve immediately to allow the function to return
   });
 }

@@ -9,6 +9,7 @@ import { initProjectConfigFile } from "./useProjectConfig";
 import { SaveProjectConfigsHandler } from "./handlers/saveProjectConfigsHandler";
 import { getProjectConfigsHandler } from "./handlers/getProjectConfigsHandler";
 import { killProcessHandler } from "./handlers/killProcessHandler";
+import { processStatusHandler } from "./handlers/processStatusHandler";
 
 const require = createRequire(import.meta.url);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -95,6 +96,7 @@ async function createWindow() {
   SaveProjectConfigsHandler();
   getProjectConfigsHandler();
   killProcessHandler();
+  processStatusHandler();
 }
 
 app.whenReady().then(async () => {

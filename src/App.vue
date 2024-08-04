@@ -78,7 +78,7 @@ const handleSelectionChange = (selectedProjects: ProjectConfig[]): void => {
           width="220"
         />
 
-        <el-table-column label="Status" width="100">
+        <el-table-column label="Status" width="300">
           <template #default="{ row: project }">
             <ProjectStatusSection :project="project" />
           </template>

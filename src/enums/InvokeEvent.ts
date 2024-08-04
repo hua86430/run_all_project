@@ -4,4 +4,5 @@
   GET_PROJECT_CONFIGS = "get-project-configs",
   SAVE_PROJECT_CONFIG = "save-project-config",
   KILL_PROCESS = "kill-process",
+  SUBSCRIBE_PROCESS_STATUS = "subscribe-process-status",
 }
