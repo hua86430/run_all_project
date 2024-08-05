@@ -3,18 +3,19 @@ import { ProjectConfig } from "./classes/ProjectConfig";
 import { listenBuildProjectMessage } from "./listeners/ListenBuildProjectMessage";
 import { listenRunProjectMessage } from "./listeners/ListenRunProjectMessage";
 import { buildAndRunProject } from "./invokes/BuildAndRunProject";
-import { ref } from "vue";
+import { ref, onMounted, computed } from "vue";
 
 const props = defineProps<{
   project: ProjectConfig;
+  isMultipleBuilding: boolean;
 }>();
 
-const isBuildingModelValue = defineModel<boolean>("isBuilding");
+const isBuilding = ref(false);
 const buildMessage = ref<string>("");
 const runMessage = ref<string>("");
 
 async function buildAndRun() {
-  if (isBuildingModelValue.value) {
+  if (props.isMultipleBuilding) {
     return;
   }
 
@@ -22,19 +23,27 @@ async function buildAndRun() {
     alert("Please upload a .csproj file");
     return;
   }
-  isBuildingModelValue.value = true;
+
+  try {
+    isBuilding.value = true;
+
+    await buildAndRunProject(props.project);
+  } finally {
+    isBuilding.value = false;
+  }
+}
+
+const isBtnDisabled = computed(() => {
+  return props.isMultipleBuilding || isBuilding.value;
+});
+
+onMounted(() => {
   listenBuildProjectMessage(buildMessage, props.project.projectName);
   listenRunProjectMessage(runMessage, props.project.projectName);
-  await buildAndRunProject(props.project);
-  isBuildingModelValue.value = false;
-}
+});
 </script>
 <template>
-  <el-button
-    type="info"
-    @click="buildAndRun"
-    plain
-    :disabled="isBuildingModelValue"
+  <el-button type="info" @click="buildAndRun" plain :disabled="isBtnDisabled"
     >Build And Run
   </el-button>
 

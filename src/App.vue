@@ -15,7 +15,7 @@ const logs = ref<string>("");
 const projectConfigs = ref<ProjectConfig[]>([]);
 const tableRef = ref<InstanceType<typeof ElTable>>();
 const isInitializing = ref<boolean>(true);
-const isBuilding = ref<boolean>(false);
+const isMultipleBuilding = ref<boolean>(false);
 
 async function init() {
   setTimeout(async () => {
@@ -84,15 +84,18 @@ const isRunBtnEnable = computed((): boolean => {
 });
 
 const runAllProjects = async () => {
-  if (isBuilding.value) {
+  if (isMultipleBuilding.value) {
     return;
   }
 
-  isBuilding.value = true;
-  await multipleBuildAndRunProject(
-    projectConfigs.value.filter((config) => config.isSelected),
-  );
-  isBuilding.value = false;
+  try {
+    isMultipleBuilding.value = true;
+    await multipleBuildAndRunProject(
+      projectConfigs.value.filter((config) => config.isSelected),
+    );
+  } finally {
+    isMultipleBuilding.value = false;
+  }
 };
 </script>
 
@@ -105,7 +108,7 @@ const runAllProjects = async () => {
       <div class="right-action">
         <el-button
           type="info"
-          :disabled="isBuilding || !isRunBtnEnable"
+          :disabled="isMultipleBuilding || !isRunBtnEnable"
           @click="runAllProjects"
           >Run Selected Projects</el-button
         >
@@ -146,7 +149,7 @@ const runAllProjects = async () => {
           <template #default="{ row: project }">
             <ProjectConfigActionArea
               v-model:project-configs="projectConfigs"
-              v-model:is-building="isBuilding"
+              :is-multiple-building="isMultipleBuilding"
               :project="project"
             />
           </template>
