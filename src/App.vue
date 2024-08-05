@@ -6,7 +6,7 @@ import { loadProjectConfigs } from "./invokes/InitProjectConfigsInvokes";
 import { getMessage } from "./invokes/GetMessage";
 import { saveProjectConfig } from "./invokes/SaveProjectConfigInvokes";
 import UploadCsprojFile from "./UploadCsprojFile.vue";
-import { ElTable } from "element-plus";
+import { ElMessage, ElTable } from "element-plus";
 import ProjectStatusSection from "./ProjectStatusSection.vue";
 import { multipleBuildAndRunProject } from "./invokes/BuildAndRunProject";
 import ProjectConfigActionArea from "./ProjectConfigActionArea.vue";
@@ -63,7 +63,7 @@ watch(
     }
 
     isSaveBtnEnable.value = !Object.is(
-      JSON.stringify(newValue.value),
+      JSON.stringify(newValue.values),
       JSON.stringify(await loadProjectConfigs()),
     );
   },
@@ -74,10 +74,12 @@ watch(
 
 const saveConfigs = async (): Promise<void> => {
   await saveProjectConfig(projectConfigs.value);
+  ElMessage.success("Save Configs Successfully");
   isSaveBtnEnable.value = false;
 };
 
 const isRunBtnEnable = computed((): boolean => {
+  console.log(projectConfigs.value);
   return projectConfigs.value.some((config) => config.isSelected);
 });
 

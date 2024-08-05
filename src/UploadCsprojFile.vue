@@ -46,7 +46,7 @@ const onUploadFile = (uploadFile: UploadFile): void => {
     :show-file-list="false"
   >
     <template #trigger>
-      <el-button plain type="primary">Select .csproj file</el-button>
+      <el-button type="primary">Select .csproj file</el-button>
     </template>
   </el-upload>
 </template>

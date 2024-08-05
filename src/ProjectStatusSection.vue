@@ -29,12 +29,10 @@ const tagStatus = computed(
           return "success";
         case ProcessStage.PROCESSING:
           return "warning";
-        case ProcessStage.ERROR:
-          return "danger";
       }
     }
 
-    return "warning";
+    return "danger";
   },
 );
 

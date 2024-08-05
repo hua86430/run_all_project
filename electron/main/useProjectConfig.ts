@@ -3,6 +3,8 @@ import os from "node:os";
 import fs from "node:fs";
 import { ProjectConfig } from "../../src/classes/ProjectConfig";
 
+// import { app, BrowserWindow, ipcMain, screen, shell, Menu } from "electron";
+
 const configDir = path.join(os.homedir(), "AppData", "Local", "RunDotNetApp");
 const configPath = path.join(configDir, "load-project-config.json");
 
