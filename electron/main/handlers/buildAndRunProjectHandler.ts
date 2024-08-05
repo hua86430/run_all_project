@@ -69,34 +69,22 @@ async function buildProject(dto: RunProjectProcessingDto) {
     );
     const { stdout, stderr } = await execAsync(buildCommand);
     electronEvent.sender.send(dto.buildEventChannel, `Build stdout: ${stdout}`);
-    if (stderr) {
-      electronEvent.sender.send(
-        dto.buildEventChannel,
-        `,Build stderr: ${stderr}`,
-      );
-
-      syncProcessStatus(
-        new SyncProcessStatusRequest(
-          dto.projectName,
-          ProcessStage.BUILDING,
-          SyncProcessStatus.ERROR,
-        ),
-      );
-    }
   } catch (error) {
     electronEvent.sender.send(
       dto.buildEventChannel,
       `Build error: ${error.message}`,
     );
 
+    console.log(JSON.stringify(error.stdout));
     syncProcessStatus(
       new SyncProcessStatusRequest(
         dto.projectName,
         ProcessStage.BUILDING,
         SyncProcessStatus.ERROR,
+        `[${dto.projectName}] [Build error]: ${JSON.stringify(error.stdout)}`,
       ),
     );
-    throw error;
+    throw new Error(`[${dto.projectName}] [Build error]: ${error.stdout}`);
   }
 }
 

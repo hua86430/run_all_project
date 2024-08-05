@@ -49,6 +49,7 @@ export function syncProcessStatus(request: SyncProcessStatusRequest) {
             projectName: request.projectName,
             stage: request.stage,
             status: SyncProcessStatus.ERROR,
+            message: request.message,
           },
         );
 

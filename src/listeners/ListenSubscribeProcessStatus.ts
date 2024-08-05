@@ -12,6 +12,10 @@ export function ListenSubscribeProcessStatus(
     response: ListenerResponse<SyncProcessStatusResponse>,
   ) => {
     processStatus.value = response.data;
+    processStatus.value.message = response.data.message?.replace(
+      /(\\r\\n|\\n|\\r)/g,
+      "<br />",
+    );
   };
   window.ipcRenderer.on(
     `${projectName}-${ListenerEvent.PROCESS_STATUS}`,
