@@ -57,9 +57,7 @@ onMounted(async () => {
     append-to="body"
   >
     <template #content>
-      <div>
-        <p v-html="processStatus?.message" style="width: 50vw" />
-      </div>
+      <div v-html="processStatus?.message" style="max-width: 50vw" />
     </template>
     <el-tag
       size="large"
