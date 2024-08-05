@@ -45,7 +45,3 @@ export async function killProcessByName(projectName: string) {
     ),
   );
 }
-
-async function getProcessList() {
-  return;
-}

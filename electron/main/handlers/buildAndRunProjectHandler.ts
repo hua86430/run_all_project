@@ -1,4 +1,4 @@
-﻿import { spawn, exec } from "child_process";
+﻿import { exec, spawn } from "child_process";
 import { RunProjectRequest } from "../../../src/classes/RunProjectRequest";
 import { getExistProjectByName, killProcessByName } from "../useProcess";
 import chokidar from "chokidar";
@@ -12,6 +12,7 @@ import { ProcessStage } from "../../../src/enums/processStage";
 import { SyncProcessStatus } from "../../../src/enums/syncProcessStatus";
 import { useHandler } from "./useHandler";
 import { promisify } from "util";
+import { useLogger } from "../useLogger";
 
 const execAsync = promisify(exec);
 let electronEvent: Electron.IpcMainInvokeEvent;
@@ -138,12 +139,28 @@ function runProject(dto: RunProjectProcessingDto) {
 
 let debounceTimer: NodeJS.Timeout;
 async function watchForChanges(dto: RunProjectProcessingDto) {
-  const watcher = chokidar.watch(path.dirname(dto.csprojFilePath), {
+  const gitTrackedFiles = (
+    await execAsync("git ls-files", {
+      cwd: path.dirname(dto.csprojFilePath),
+      encoding: "utf-8",
+    })
+  ).stdout
+    .split("\n")
+    .filter(Boolean)
+    .map((filePath) =>
+      path.resolve(path.dirname(dto.csprojFilePath), filePath),
+    );
+
+  const watcher = chokidar.watch(gitTrackedFiles, {
     persistent: true,
-    ignored: /node_modules|\.git/,
+    ignored: /node_modules|\.git|bin|obj/,
     ignoreInitial: true,
   });
+
   watcher.on("change", async (filePath: string) => {
+    useLogger.info(
+      `FileWatcher: Application: ${dto.projectName}, File: ${filePath}`,
+    );
     clearTimeout(debounceTimer);
 
     debounceTimer = setTimeout(async () => {
