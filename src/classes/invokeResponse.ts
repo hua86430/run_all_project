@@ -24,7 +24,8 @@
   ensureSuccess() {
     if (!this.success) {
       const error = new Error(this.message);
-      alert(error.stack);
+      alert(this.message);
+      // ElMessageBox.alert(this.message, "Error");
 
       throw error;
     }

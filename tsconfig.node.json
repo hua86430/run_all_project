@@ -7,7 +7,7 @@
     "allowSyntheticDefaultImports": true
   },
   "include": [
-    "src/**/*",
+//    "src/**/*",
     "electron",
   ]
 }

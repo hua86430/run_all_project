@@ -20,8 +20,6 @@ const onUploadFile = (uploadFile: UploadFile): void => {
     uploadFile.name,
   );
 
-  console.log(csprojFileObject);
-
   const existConfig = projectConfigs.value.find(
     (config) => config.projectName === csprojFileObject.projectName,
   );

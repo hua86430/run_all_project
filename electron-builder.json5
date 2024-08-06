@@ -29,10 +29,11 @@
     "artifactName": "${productName}-Windows-${version}-Setup.${ext}"
   },
   "nsis": {
-    "oneClick": false,
-    "perMachine": false,
+    "oneClick": true,
+    "perMachine": true,
     "allowToChangeInstallationDirectory": true,
-    "deleteAppDataOnUninstall": false
+    "deleteAppDataOnUninstall": false,
+    "createStartMenuShortcut": true,
   },
   "linux": {
     "target": [

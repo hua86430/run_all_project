@@ -75,7 +75,6 @@ async function buildProject(dto: RunProjectProcessingDto) {
       `Build error: ${error.message}`,
     );
 
-    console.log(JSON.stringify(error.stdout));
     syncProcessStatus(
       new SyncProcessStatusRequest(
         dto.projectName,

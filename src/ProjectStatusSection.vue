@@ -12,10 +12,10 @@ import { ProcessStage } from "./enums/processStage";
 const props = defineProps<{
   project: ProjectConfig;
 }>();
-const testHtmlString = ref(
-  "[Shabondi] [Build error]: \".NET 的 MSBuild 版本 17.8.5+b5265ef37\\r\\n  Determining projects to restore...\\r\\nF:\\\\git\\\\shabondi\\\\Shabondi\\\\Shabondi.csproj : warning NU1803: You are running the 'restore' operation with an 'HTTP' source, 'http://nuget.coreop.net/nuget'. Non-HTTPS access will be removed in a future version. Consider migrating to an 'HTTPS' source.\\r\\n  所有專案都在最新狀態，可進行還原。\\r\\nF:\\\\git\\\\shabondi\\\\Shabondi\\\\Shabondi.csproj : warning NU1803: You are running the 'restore' operation with an 'HTTP' source, 'http://nuget.coreop.net/nuget'. Non-HTTPS access will be removed in a future version. Consider migrating to an 'HTTPS' source.\\r\\nF:\\\\git\\\\shabondi\\\\Shabondi\\\\Program.cs(29,5): error CS1003: 語法錯誤，必須是 ',' [F:\\\\git\\\\shabondi\\\\Shabondi\\\\Shabondi.csproj]\\r\\n\\r\\n建置失敗。\\r\\n\\r\\nF:\\\\git\\\\shabondi\\\\Shabondi\\\\Shabondi.csproj : warning NU1803: You are running the 'restore' operation with an 'HTTP' source, 'http://nuget.coreop.net/nuget'. Non-HTTPS access will be removed in a future version. Consider migrating to an 'HTTPS' source.\\r\\nF:\\\\git\\\\shabondi\\\\Shabondi\\\\Shabondi.csproj : warning NU1803: You are running the 'restore' operation with an 'HTTP' source, 'http://nuget.coreop.net/nuget'. Non-HTTPS access will be removed in a future version. Consider migrating to an 'HTTPS' source.\\r\\nF:\\\\git\\\\shabondi\\\\Shabondi\\\\Program.cs(29,5): error CS1003: 語法錯誤，必須是 ',' [F:\\\\git\\\\shabondi\\\\Shabondi\\\\Shabondi.csproj]\\r\\n    2 個警告\\r\\n    1 個錯誤\\r\\n\\r\\n經過時間 00:00:00.82\\r\\n\"",
+
+const processStatus = ref<SyncProcessStatusResponse>(
+  {} as SyncProcessStatusResponse,
 );
-const processStatus = ref<SyncProcessStatusResponse>();
 
 const tagStatus = computed(
   (): "success" | "warning" | "info" | "primary" | "danger" => {

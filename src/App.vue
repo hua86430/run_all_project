@@ -79,7 +79,6 @@ const saveConfigs = async (): Promise<void> => {
 };
 
 const isRunBtnEnable = computed((): boolean => {
-  console.log(projectConfigs.value);
   return projectConfigs.value.some((config) => config.isSelected);
 });
 

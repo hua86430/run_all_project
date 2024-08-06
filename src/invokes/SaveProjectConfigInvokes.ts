@@ -1,5 +1,5 @@
 ﻿import { SendInvoke } from "../composables/SendInvoke";
-import _ from "lodash";
+import _ from "lodash-es";
 import { ProjectConfig } from "../classes/ProjectConfig";
 import { InvokeEvent } from "../enums/InvokeEvent";
 
