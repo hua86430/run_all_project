@@ -125,18 +125,25 @@ function runProject(dto: RunProjectProcessingDto) {
 }
 
 let debounceTimer: NodeJS.Timeout;
+
+async function getGitTrackedFiles(csprojFilePath: string) {
+  try {
+    return (
+      await execAsync("git ls-files", {
+        cwd: path.dirname(csprojFilePath),
+        encoding: "utf-8",
+      })
+    ).stdout
+      .split("\n")
+      .filter(Boolean)
+      .map((filePath) => path.resolve(path.dirname(csprojFilePath), filePath));
+  } catch (error) {
+    throw new Error(`Error getting git tracked files: ${error.message}`);
+  }
+}
+
 async function watchForChanges(dto: RunProjectProcessingDto) {
-  const gitTrackedFiles = (
-    await execAsync("git ls-files", {
-      cwd: path.dirname(dto.csprojFilePath),
-      encoding: "utf-8",
-    })
-  ).stdout
-    .split("\n")
-    .filter(Boolean)
-    .map((filePath) =>
-      path.resolve(path.dirname(dto.csprojFilePath), filePath),
-    );
+  const gitTrackedFiles = await getGitTrackedFiles(dto.csprojFilePath);
 
   const watcher = chokidar.watch(gitTrackedFiles, {
     persistent: true,
