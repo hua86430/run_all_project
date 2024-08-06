@@ -13,9 +13,7 @@ const props = defineProps<{
   project: ProjectConfig;
 }>();
 
-const processStatus = ref<SyncProcessStatusResponse>(
-  {} as SyncProcessStatusResponse,
-);
+const processStatus = ref<SyncProcessStatusResponse | undefined>(undefined);
 
 const tagStatus = computed(
   (): "success" | "warning" | "info" | "primary" | "danger" => {
