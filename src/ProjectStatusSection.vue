@@ -13,7 +13,7 @@ const props = defineProps<{
   project: ProjectConfig;
 }>();
 
-const processStatus = ref<SyncProcessStatusResponse | undefined>(undefined);
+const processStatus = ref<SyncProcessStatusResponse>();
 
 const tagStatus = computed(
   (): "success" | "warning" | "info" | "primary" | "danger" => {
@@ -40,11 +40,13 @@ onMounted(async () => {
   ListenSubscribeProcessStatus(
     props.project.projectName,
     (response: SyncProcessStatusResponse | undefined) => {
-      processStatus.value = response;
-      processStatus.value.message = response.message?.replace(
-        /(\\r\\n|\\n|\\r)/g,
-        "<br />",
-      );
+      if (response) {
+        processStatus.value = response;
+        processStatus.value.message = response.message?.replace(
+          /(\\r\\n|\\n|\\r)/g,
+          "<br />",
+        );
+      }
     },
   );
 
