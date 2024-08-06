@@ -94,6 +94,5 @@ onMounted(async () => {
 .status-tag {
   font-size: 14px;
   line-height: 14px;
-  //display: flex;
 }
 </style>
