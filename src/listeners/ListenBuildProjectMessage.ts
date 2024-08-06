@@ -2,13 +2,11 @@
 import { ListenerEvent } from "../enums/ListenerEvent";
 
 export function listenBuildProjectMessage(
-  buildMessage: Ref<string>,
   projectName: string,
+  callback: (message: string) => void,
 ) {
-  buildMessage.value = "";
-
   const listener = (event: any, message: string) => {
-    buildMessage.value = message.replace(/\r?\n/g, "<br>") + "<br>";
+    callback(message);
   };
   window.ipcRenderer.on(
     `${projectName}-${ListenerEvent.BUILD_OUTPUT}`,

@@ -38,8 +38,12 @@ const isBtnDisabled = computed(() => {
 });
 
 onMounted(() => {
-  listenBuildProjectMessage(buildMessage, props.project.projectName);
-  listenRunProjectMessage(runMessage, props.project.projectName);
+  listenBuildProjectMessage(props.project.projectName, (message: string) => {
+    buildMessage.value = message.replace(/\r?\n/g, "<br>") + "<br>";
+  });
+  listenRunProjectMessage(props.project.projectName, (message: string) => {
+    runMessage.value = message.replace(/\r?\n/g, "<br>") + "<br>";
+  });
 });
 </script>
 <template>
