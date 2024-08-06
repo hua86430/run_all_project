@@ -1,4 +1,5 @@
 ﻿export enum ProcessStage {
+  UNKNOWN = "Unknown",
   BUILDING = "Building",
   RUNNING = "Running",
   NOT_RUNNING = "Not Running By Helper",

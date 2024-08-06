@@ -39,7 +39,16 @@ const tagStatus = computed(
 );
 
 onMounted(async () => {
-  ListenSubscribeProcessStatus(processStatus, props.project.projectName);
+  ListenSubscribeProcessStatus(
+    props.project.projectName,
+    (response: SyncProcessStatusResponse | undefined) => {
+      processStatus.value = response;
+      processStatus.value.message = response.message?.replace(
+        /(\\r\\n|\\n|\\r)/g,
+        "<br />",
+      );
+    },
+  );
 
   await SendInvoke(
     InvokeEvent.SUBSCRIBE_PROCESS_STATUS,
@@ -49,7 +58,7 @@ onMounted(async () => {
 </script>
 <template>
   <el-tooltip
-    :disabled="!Boolean(processStatus?.message)"
+    :disabled="!processStatus?.message"
     class="box-item"
     effect="dark"
     placement="right-end"
