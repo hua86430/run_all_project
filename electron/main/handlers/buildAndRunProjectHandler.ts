@@ -138,7 +138,9 @@ async function getGitTrackedFiles(csprojFilePath: string) {
       .filter(Boolean)
       .map((filePath) => path.resolve(path.dirname(csprojFilePath), filePath));
   } catch (error) {
-    throw new Error(`Error getting git tracked files: ${error.message}`);
+    throw new Error(
+      `Error getting git tracked files: ${error.message}, maybe this is not a git repository`,
+    );
   }
 }
 
