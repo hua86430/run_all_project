@@ -29,7 +29,7 @@
     "artifactName": "${productName}-Windows-${version}-Setup.${ext}"
   },
   "nsis": {
-    "oneClick": true,
+    "oneClick": false,
     "perMachine": true,
     "allowToChangeInstallationDirectory": true,
     "deleteAppDataOnUninstall": false,
@@ -40,5 +40,14 @@
       "AppImage"
     ],
     "artifactName": "${productName}-Linux-${version}.${ext}"
-  }
+  },
+  "publish": [
+    {
+      "provider": "github",
+      "owner": "hua86430",
+      "repo": "run_all_project",
+      "releaseType": "draft",
+      "token": ""
+    }
+  ]
 }
