@@ -14,8 +14,11 @@ import { getProjectConfigsHandler } from "./handlers/getProjectConfigsHandler";
 import { killProcessHandler } from "./handlers/killProcessHandler";
 import { processStatusHandler } from "./handlers/processStatusHandler";
 import { InvokeResponse } from "../../src/classes/invokeResponse";
-
+import checkUpdate from "../../checkUpdate";
+// import { autoUpdater } from "electron-updater";
 const require = createRequire(import.meta.url);
+const { autoUpdater } = require("electron-updater");
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // The built directory structure
@@ -72,7 +75,14 @@ async function createWindow() {
       // contextIsolation: false,
     },
   });
+  autoUpdater.updateConfigPath = path.join("dev-app-update.yml");
 
+  // checkUpdate(win, ipcMain);
+  await autoUpdater.checkForUpdatesAndNotify();
+
+  ipcMain.handle("install", () => {
+    autoUpdater.quitAndInstall();
+  });
   if (VITE_DEV_SERVER_URL) {
     // #298
 
@@ -83,6 +93,15 @@ async function createWindow() {
     win.loadFile(indexHtml);
     Menu.setApplicationMenu(null);
   }
+
+  autoUpdater.on("update-available", () => {
+    console.log(123);
+    win?.webContents.send("update-available");
+  });
+
+  autoUpdater.on("update-downloaded", () => {
+    win?.webContents.send("update-downloaded");
+  });
 
   // Test actively push message to the Electron-Renderer
   win.webContents.on("did-finish-load", () => {
@@ -105,6 +124,11 @@ async function createWindow() {
 }
 
 app.whenReady().then(async () => {
+  Object.defineProperty(app, "isPackaged", {
+    get() {
+      return true;
+    },
+  });
   initProjectConfigFile();
   await createWindow();
 });
