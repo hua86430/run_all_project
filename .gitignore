@@ -11,7 +11,12 @@ node_modules
 dist
 dist-ssr
 dist-electron
-release
+# 忽略整個 release 資料夾
+
+# 但允許 release 資料夾中的特定文件
+!release/**/*.yml
+!release/**/*.exe
+release/
 *.local
 
 # Editor directories and files
