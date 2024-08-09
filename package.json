@@ -1,6 +1,6 @@
 {
   "name": "run-dot-net-app-in-background",
-  "version": "0.0.1-beta.1",
+  "version": "0.0.2-beta",
   "main": "dist-electron/main/index.js",
   "author": "TWSC - Jack Huang",
   "license": "MIT",
@@ -52,7 +52,6 @@
     "find-process": "^1.4.7",
     "lodash-es": "^4.17.21",
     "prettier": "^3.3.3",
-    "ps-list": "^8.1.1",
     "sass": "^1.77.8"
   }
 }

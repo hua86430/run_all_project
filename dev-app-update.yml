@@ -2,4 +2,4 @@
 owner: "hua86430"
 repo: "run_all_project"
 releaseType: "draft"
-token: ""
+private: false
