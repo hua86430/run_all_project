@@ -1,0 +1,5 @@
+﻿provider: "github"
+owner: "hua86430"
+repo: "run_all_project"
+releaseType: "draft"
+private: false

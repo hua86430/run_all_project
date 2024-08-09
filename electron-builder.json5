@@ -47,8 +47,7 @@
       "owner": "hua86430",
       "repo": "run_all_project",
       "private": false,
-      "releaseType": "draft",
-      "token": ""
+      "releaseType": "draft"
     }
   ]
 }
