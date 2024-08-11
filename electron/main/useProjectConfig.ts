@@ -2,24 +2,26 @@
 import os from "node:os";
 import fs from "node:fs";
 import { ProjectConfig } from "../../src/classes/ProjectConfig";
-
-// import { app, BrowserWindow, ipcMain, screen, shell, Menu } from "electron";
+import { ApplicationConfigPath } from "../../src/enums/applicationConfigPath";
+import { MyAppConfig } from "../../src/classes/myAppConfig";
+import { app, App } from "electron";
+import { ApplicationConfigType } from "../../src/enums/applicationConfigType";
 
 const configDir = path.join(os.homedir(), "AppData", "Local", "RunDotNetApp");
-const configPath = path.join(configDir, "load-project-config.json");
+const projectConfigPath = path.join(
+  configDir,
+  ApplicationConfigPath.ProjectConfig,
+);
+const appConfigPath = path.join(configDir, ApplicationConfigPath.AppConfig);
 
-function createDefaultConfig() {
-  const defaultConfig = [];
-  fs.writeFile(
-    configPath,
-    JSON.stringify(defaultConfig, null, 2),
-    (writeErr) => {
-      if (writeErr) {
-        console.error("An error occurred creating the file:", writeErr);
-        return;
-      }
-    },
-  );
+function createDefaultConfig(path: string) {
+  const defaultConfig = path === projectConfigPath ? [] : new MyAppConfig(app);
+  fs.writeFile(path, JSON.stringify(defaultConfig, null, 2), (writeErr) => {
+    if (writeErr) {
+      console.error("An error occurred creating the file:", writeErr);
+      return;
+    }
+  });
 }
 
 function ensureConfigDirectoryExists(callback: () => void) {
@@ -36,7 +38,7 @@ function readConfigFile(configPath: string) {
   fs.readFile(configPath, "utf-8", (err, data) => {
     if (err) {
       if (err.code === "ENOENT") {
-        ensureConfigDirectoryExists(() => createDefaultConfig());
+        ensureConfigDirectoryExists(() => createDefaultConfig(configPath));
       } else {
         console.error("An error occurred reading the file:", err);
       }
@@ -44,14 +46,20 @@ function readConfigFile(configPath: string) {
     }
   });
 }
-
 export function initProjectConfigFile() {
-  readConfigFile(configPath);
+  readConfigFile(projectConfigPath);
+  readConfigFile(appConfigPath);
 }
 
-export function saveProjectConfigs(configs: ProjectConfig[]) {
+export function saveConfig<TFileType, ApplicationConfigType>(
+  config: TFileType,
+  type: ApplicationConfigType,
+) {
+  const path =
+    type === ApplicationConfigType.Project ? projectConfigPath : appConfigPath;
+
   ensureConfigDirectoryExists(() => {
-    fs.writeFile(configPath, JSON.stringify(configs, null, 2), (writeErr) => {
+    fs.writeFile(path, JSON.stringify(config, null, 2), (writeErr) => {
       if (writeErr) {
         console.error("An error occurred creating the file:", writeErr);
         return;
@@ -62,9 +70,21 @@ export function saveProjectConfigs(configs: ProjectConfig[]) {
 
 export function getProjectConfigs(): ProjectConfig[] {
   try {
-    const data = fs.readFileSync(configPath, "utf-8");
+    const data = fs.readFileSync(projectConfigPath, "utf-8");
     if (!Boolean(data)) {
       return [];
+    }
+    return JSON.parse(data);
+  } catch (err) {
+    console.error("An error occurred reading the file:", err);
+  }
+}
+
+export function getAppConfig(): MyAppConfig {
+  try {
+    const data = fs.readFileSync(appConfigPath, "utf-8");
+    if (!Boolean(data)) {
+      return new MyAppConfig(app);
     }
     return JSON.parse(data);
   } catch (err) {
