@@ -1,6 +1,6 @@
 {
   "name": "run-dot-net-app-in-background",
-  "version": "0.0.2-beta",
+  "version": "0.0.7-beta",
   "main": "dist-electron/main/index.js",
   "author": "TWSC - Jack Huang",
   "license": "MIT",

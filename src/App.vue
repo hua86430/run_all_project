@@ -100,7 +100,6 @@ const runAllProjects = async () => {
 
 <template>
   <div>
-    <h1>Project Settings V2</h1>
     <div class="base-action-section">
       <div class="left-action">
         <UploadCsprojFile v-model:project-configs="projectConfigs" />
