@@ -51,10 +51,11 @@ export function initProjectConfigFile() {
   readConfigFile(appConfigPath);
 }
 
-export function saveConfig<TFileType, ApplicationConfigType>(
-  config: TFileType,
+export function saveConfig<TFileType>(
   type: ApplicationConfigType,
+  config: TFileType,
 ) {
+  console.log(type);
   const path =
     type === ApplicationConfigType.Project ? projectConfigPath : appConfigPath;
 

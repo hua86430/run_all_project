@@ -10,9 +10,7 @@ export function SaveProjectConfigsHandler() {
     InvokeEvent.SAVE_PROJECT_CONFIG,
     async (event, request: ProjectConfig[]): Promise<InvokeResponse> => {
       try {
-        saveConfig<ProjectConfig[], ApplicationConfigType.Project>(
-          request,
-        );
+        saveConfig<ProjectConfig[]>(ApplicationConfigType.Project, request);
         return InvokeResponse.success("Build and run successful");
       } catch (error) {
         return InvokeResponse.error(error.message);
