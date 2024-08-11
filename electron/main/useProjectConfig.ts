@@ -55,7 +55,6 @@ export function saveConfig<TFileType>(
   type: ApplicationConfigType,
   config: TFileType,
 ) {
-  console.log(type);
   const path =
     type === ApplicationConfigType.Project ? projectConfigPath : appConfigPath;
 
