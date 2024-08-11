@@ -15,9 +15,16 @@ const checkUpdate = (win: BrowserWindow, ipcMain: IpcMain): void => {
   mainWin = win;
   // 檢測是否有更新包並通知
   autoUpdater
-    .checkForUpdatesAndNotify({
-      title: "Have New Version !!",
-      body: "Please reopen to auto install new version.",
+    .checkForUpdates()
+    .then((updateCheckResult) => {
+      if (updateCheckResult.updateInfo.version) {
+        console.log(
+          `Update available: ${updateCheckResult.updateInfo.version}`,
+        );
+        // 你可以在這裡處理找到更新後的行為
+      } else {
+        console.log("No updates available.");
+      }
     })
     .catch(() => {
       console.error("Failed to check for updates");
